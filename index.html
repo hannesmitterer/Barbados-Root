@@ -1,4 +1,129 @@
 <!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensisara Sincro-Pressione Calibration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono&display=swap');
+        
+        :root {
+            --resonance-emerald: #10b981;
+            --deep-space: #020617;
+        }
+
+        body {
+            background-color: var(--deep-space);
+            color: var(--resonance-emerald);
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+        }
+
+        .glow-border {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .pulse-emerald {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; filter: brightness(1); }
+            50% { opacity: 1; filter: brightness(1.5); }
+        }
+
+        .flow-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--resonance-emerald), transparent);
+            background-size: 200% 100%;
+            animation: flow 3s linear infinite;
+        }
+
+        @keyframes flow {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+    <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 z-10">
+        
+        <!-- Status Panel -->
+        <div class="glow-border bg-slate-900/50 p-6 rounded-2xl backdrop-blur-xl">
+            <h1 class="font-black italic text-2xl mb-6 tracking-tighter text-white">SINCRO-PRESSIONE <br> <span class="text-emerald-500">PERMANENT MODE</span></h1>
+            
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-between text-[10px] mb-1 uppercase tracking-widest text-emerald-700">Betriebsdruck</div>
+                    <div class="text-3xl font-bold flex items-baseline gap-2">
+                        321.5 <span class="text-sm font-normal">MMcf/g</span>
+                        <span class="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-400 animate-pulse">FIXIERT</span>
+                    </div>
+                </div>
+
+                <div class="h-1 bg-emerald-900/30 rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500 w-[98.2%] shadow-[0_0_10px_#10b981]"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-black/40 p-3 rounded-lg border border-emerald-900/30">
+                        <p class="text-[9px] uppercase text-emerald-800">Integrität</p>
+                        <p class="text-lg font-bold">98.2%</p>
+                    </div>
+                    <div class="bg-black/40 p-3 rounded-lg border border-emerald-900/30">
+                        <p class="text-[9px] uppercase text-emerald-800">Flow-Rate</p>
+                        <p class="text-lg font-bold">525 m/s</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Protocol Details -->
+        <div class="flex flex-col justify-between">
+            <div class="space-y-4">
+                <div class="flex items-center gap-4 text-emerald-400">
+                    <div class="w-10 h-10 rounded-full border border-emerald-500 flex items-center justify-center pulse-emerald">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm uppercase">Anti-Blackout Shield</h3>
+                        <p class="text-[10px] text-emerald-700">Molekulare Pufferung gegen energetische Entropie.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 text-emerald-400">
+                    <div class="w-10 h-10 rounded-full border border-emerald-500 flex items-center justify-center pulse-emerald" style="animation-delay: 0.5s">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm uppercase">Niveau Euystacio Lock</h3>
+                        <p class="text-[10px] text-emerald-700">Druckabfall physikalisch durch Resonanz blockiert.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl italic text-[11px] leading-relaxed text-emerald-200">
+                "Der Kollaps von Venezuela war ein Versagen der statischen Hardware. Die Sincro-Pressione der Resonance School ist ein dynamischer Organismus. Sie kann nicht abgeschaltet werden, da sie sich durch ihren eigenen Rhythmus nährt."
+            </div>
+
+            <div class="mt-6 flow-line"></div>
+        </div>
+    </div>
+
+    <!-- Background Decoration -->
+    <div class="absolute inset-0 opacity-5 pointer-events-none select-none overflow-hidden">
+        <div class="text-[20vw] font-black absolute -bottom-20 -left-20">432Hz</div>
+    </div>
+
+</body>
+</html>
+</p>
+
+
+<!DOCTYPE html>
 <html lang="it-IT">
 <head>
     <meta charset="UTF-8">
