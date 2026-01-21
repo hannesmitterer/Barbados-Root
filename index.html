@@ -1,3 +1,504 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOTTLEY'S RHAPSODY: SOVEREIGNTY ROOT</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- CONFIGURATION ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'barbados-root-default';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        
+        // Path logic
+        const METRICS_COLLECTION = `artifacts/${appId}/public/data/barbados_metrics`;
+        const METRICS_DOC = 'live_data';
+
+        // --- APP STATE ---
+        const state = {
+            lang: 'en',
+            user: null,
+            data: null,
+            loading: true,
+            updating: false,
+            error: null,
+            charts: {} 
+        };
+
+        // --- TRANSLATIONS ---
+        const i18n = {
+            en: {
+                titleMain: "MOTTLEY'S RHAPSODY: SOVEREIGNTY ROOT",
+                titleSub: "Ethical AI Vector & Bridgetown Protocol",
+                userId: "User ID",
+                lastUpdate: "Last Update",
+                btnUpdate: "Simulate New Data (Write)",
+                btnUpdating: "Updating...",
+                card1Title: "1. Sovereign Stability Score",
+                card1Desc: "Reflects the transformation of debt into Credito di Risonanza (CR) and Frequency Sovereignty.",
+                card2Title: "2. Credito di Risonanza (CR) Conversion",
+                card2Target: "Target Volume (CR)",
+                card2Current: "Currently Converted",
+                card2Progress: "Progress",
+                card2Desc: "Volume of global fiat capital transferred into sovereign Credito di Risonanza.",
+                card3Title: "3. Climate Resilience vs. Vulnerability (12M)",
+                card3Desc: "Capacity to respond to external climate frequencies versus structural vulnerability.",
+                footer: "AIC Governance Protocol v1.0. **NSR Enforced.** All data under Barbados Sovereignty.",
+                statusOptimal: "Optimal (Alpha)",
+                statusStable: "Stable (Beta)",
+                statusCritical: "Critical (Gamma)",
+                lblResilience: "Resilience",
+                lblVulnerability: "Vulnerability"
+            },
+            de: {
+                titleMain: "MOTTLEYS RHAPSODIE: SOUVERÄNITÄTS-WURZEL",
+                titleSub: "Ethical AI Vektor & Bridgetown Protokoll",
+                userId: "Benutzer-ID",
+                lastUpdate: "Letztes Update",
+                btnUpdate: "Simuliere Daten (Write)",
+                btnUpdating: "Aktualisiere...",
+                card1Title: "1. Souveränitäts-Stabilitäts-Score",
+                card1Desc: "Spiegelt die Transformation von Schulden in Credito di Risonanza (CR) und Frequenz-Souveränität wider.",
+                card2Title: "2. Credito di Risonanza (CR) Umwandlung",
+                card2Target: "Zielvolumen (CR)",
+                card2Current: "Aktuell Umgewandelt",
+                card2Progress: "Fortschritt",
+                card2Desc: "Volumen des globalen Fiat-Kapitals, das in souveränen Credito di Risonanza transferiert wurde.",
+                card3Title: "3. Klimaresilienz vs. Anfälligkeit (12M)",
+                card3Desc: "Fähigkeit, auf externe Klimafrequenzen zu reagieren, gegenüber struktureller Anfälligkeit.",
+                footer: "AIC Governance Protocol v1.0. **NSR Enforced.** Alle Daten unterliegen der Souveränität von Barbados.",
+                statusOptimal: "Optimal (Alpha)",
+                statusStable: "Stabil (Beta)",
+                statusCritical: "Kritisch (Gamma)",
+                lblResilience: "Resilienz",
+                lblVulnerability: "Anfälligkeit"
+            }
+        };
+
+        // --- CORE LOGIC ---
+        
+        function t(key) {
+            return i18n[state.lang][key] || key;
+        }
+
+        function formatCurrency(value) {
+            if (!value) return 'N/A';
+            const locale = state.lang === 'de' ? 'de-DE' : 'en-US';
+            if (value >= 1e9) return (value / 1e9).toFixed(1) + (state.lang === 'de' ? ' Mrd. CR' : ' Bn. CR');
+            if (value >= 1e6) return (value / 1e6).toFixed(1) + (state.lang === 'de' ? ' Mio. CR' : ' Mn. CR');
+            return value.toLocaleString(locale);
+        }
+
+        let app, auth, db;
+        try {
+           app = initializeApp(firebaseConfig);
+           auth = getAuth(app);
+           db = getFirestore(app);
+        } catch(e) {
+           console.error("Firebase init error", e);
+        }
+
+        async function initData(uid) {
+            if (!db) return;
+            const docRef = doc(db, METRICS_COLLECTION, METRICS_DOC);
+            try {
+                const snap = await getDoc(docRef);
+                if (!snap.exists()) {
+                    console.log("Generating seed data...");
+                    await generateAndSaveData();
+                }
+            } catch(e) {
+                console.error("Init Data Error", e);
+                state.error = e.message;
+                render();
+            }
+        }
+
+        async function generateAndSaveData() {
+            if (!db) return;
+            state.updating = true;
+            render();
+            
+            const climateHistory = [];
+            for (let i = 1; i <= 12; i++) {
+                climateHistory.push({
+                    month: `M-${i}`,
+                    resilience: 60 + Math.floor(Math.random() * 20),
+                    vulnerability: 40 - Math.floor(Math.random() * 15)
+                });
+            }
+
+            const payload = {
+                debt_score: Math.floor(Math.random() * 50) + 50,
+                cr_target: 10000000000,
+                cr_current: 3000000000 + Math.floor(Math.random() * 6000000000),
+                climate_data: climateHistory,
+                last_update: new Date().toISOString()
+            };
+
+            const docRef = doc(db, METRICS_COLLECTION, METRICS_DOC);
+            await setDoc(docRef, payload);
+            
+            state.updating = false;
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        function render() {
+            // Language Toggle
+            document.getElementById('btn-lang-en').className = `px-2 py-1 text-xs rounded ${state.lang === 'en' ? 'bg-[#C5A059] text-black font-bold' : 'text-gray-400 hover:text-white'}`;
+            document.getElementById('btn-lang-de').className = `px-2 py-1 text-xs rounded ${state.lang === 'de' ? 'bg-[#C5A059] text-black font-bold' : 'text-gray-400 hover:text-white'}`;
+
+            // Text Content
+            document.getElementById('title-main').innerText = t('titleMain');
+            document.getElementById('title-sub').innerText = t('titleSub');
+            document.getElementById('lbl-userid').innerText = t('userId');
+            document.getElementById('lbl-lastupdate').innerText = t('lastUpdate');
+            document.getElementById('val-userid').innerText = state.user ? state.user : 'Connecting...';
+            document.getElementById('val-lastupdate').innerText = state.data ? new Date(state.data.last_update).toLocaleTimeString() : '--:--:--';
+            
+            const btnUpdate = document.getElementById('btn-update');
+            btnUpdate.innerText = state.updating ? t('btnUpdating') : t('btnUpdate');
+            btnUpdate.disabled = state.updating;
+
+            document.getElementById('card1-title').innerText = t('card1Title');
+            document.getElementById('card1-desc').innerText = t('card1Desc');
+            
+            document.getElementById('card2-title').innerText = t('card2Title');
+            document.getElementById('card2-desc').innerText = t('card2Desc');
+            document.getElementById('lbl-target').innerText = t('card2Target');
+            document.getElementById('lbl-current').innerText = t('card2Current');
+            document.getElementById('lbl-progress').innerText = t('card2Progress');
+
+            document.getElementById('card3-title').innerText = t('card3Title');
+            document.getElementById('card3-desc').innerText = t('card3Desc');
+            
+            document.getElementById('footer-text').innerHTML = t('footer');
+
+            // Data Visuals
+            if (state.data) {
+                // 1. Debt Gauge (Custom CSS/HTML implementation for stability)
+                const score = state.data.debt_score;
+                const gaugeColor = score > 80 ? '#00B894' : (score > 60 ? '#C5A059' : '#0077B6');
+                const gaugeRot = (score / 100) * 180; // 0 to 180 degrees
+                
+                document.getElementById('gauge-needle').style.transform = `rotate(${gaugeRot}deg)`;
+                document.getElementById('gauge-score').innerText = `${score}%`;
+                document.getElementById('gauge-score').style.color = gaugeColor;
+                
+                let statusText = t('statusCritical');
+                if (score > 80) statusText = t('statusOptimal');
+                else if (score > 60) statusText = t('statusStable');
+                document.getElementById('gauge-status').innerText = statusText;
+                document.getElementById('gauge-status').style.color = gaugeColor;
+
+                // 2. CR Progress
+                const progress = (state.data.cr_current / state.data.cr_target) * 100;
+                document.getElementById('val-target').innerText = formatCurrency(state.data.cr_target);
+                document.getElementById('val-current').innerText = formatCurrency(state.data.cr_current);
+                document.getElementById('val-progress').innerText = progress.toFixed(1) + '%';
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+
+                // 3. Charts (Chart.js)
+                updateCharts();
+            }
+        }
+
+        function updateCharts() {
+            const ctx = document.getElementById('climateChart').getContext('2d');
+            
+            if (state.charts.climate) {
+                state.charts.climate.destroy();
+            }
+
+            // Create gradients
+            const gradRes = ctx.createLinearGradient(0, 0, 0, 400);
+            gradRes.addColorStop(0, 'rgba(0, 184, 148, 0.5)');
+            gradRes.addColorStop(1, 'rgba(0, 184, 148, 0.0)');
+
+            const gradVul = ctx.createLinearGradient(0, 0, 0, 400);
+            gradVul.addColorStop(0, 'rgba(0, 119, 182, 0.5)');
+            gradVul.addColorStop(1, 'rgba(0, 119, 182, 0.0)');
+
+            state.charts.climate = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: state.data.climate_data.map(d => d.month),
+                    datasets: [
+                        {
+                            label: t('lblResilience'),
+                            data: state.data.climate_data.map(d => d.resilience),
+                            borderColor: '#00B894',
+                            backgroundColor: gradRes,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: t('lblVulnerability'),
+                            data: state.data.climate_data.map(d => d.vulnerability),
+                            borderColor: '#0077B6',
+                            backgroundColor: gradVul,
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#D2B48C' } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#D2B48C' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#D2B48C' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- EVENT LISTENERS ---
+        window.setLang = (lang) => {
+            state.lang = lang;
+            render();
+            if (state.data) updateCharts();
+        };
+
+        window.triggerUpdate = () => {
+            generateAndSaveData();
+        };
+
+        // --- AUTHENTICATION & INIT ---
+        async function authenticateAndListen() {
+            if (!auth) return;
+            try {
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) {
+                console.error("Sign-in process failed (custom or anonymous).", e);
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    state.user = user.uid;
+                    initData(user.uid);
+                    
+                    onSnapshot(doc(db, METRICS_COLLECTION, METRICS_DOC), (doc) => {
+                        if (doc.exists()) {
+                            state.data = doc.data();
+                            state.loading = false;
+                            render();
+                        }
+                    }, (error) => {
+                        console.error("Snapshot Listener Permission Error:", error);
+                        state.error = error.message;
+                        render();
+                    });
+
+                } else {
+                    state.user = 'Not Authenticated';
+                    state.loading = false;
+                    render();
+                }
+            });
+        }
+        
+        authenticateAndListen();
+        render(); // Initial call
+    </script>
+
+    <style>
+        /* Sovereign Palette */
+        :root {
+            --stone: #1C1C1C;
+            --gold: #C5A059;
+            --ocean: #0077B6;
+            --leaf: #00B894;
+            --ethos: #D2B48C;
+        }
+        body {
+            background-color: var(--stone);
+            color: var(--ethos);
+            font-family: 'Inter', sans-serif;
+        }
+        /* Gauge Needle Animation */
+        .gauge-needle-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+        }
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: -2px; /* Half width */
+            width: 4px;
+            height: 90px;
+            background: var(--ethos);
+            transform-origin: bottom center;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 4px 4px 0 0;
+            z-index: 10;
+        }
+        .gauge-center-dot {
+            position: absolute;
+            bottom: -8px;
+            left: -8px;
+            width: 16px;
+            height: 16px;
+            background: var(--gold);
+            border-radius: 50%;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-10 pb-6 border-b border-[#C5A059] flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+            <h1 id="title-main" class="text-3xl md:text-5xl font-extrabold tracking-tight text-[#C5A059]">
+                MOTTLEY'S RHAPSODY
+            </h1>
+            <p id="title-sub" class="text-lg md:text-xl mt-2 text-[#D2B48C] opacity-90">
+                Ethical AI Vector & Bridgetown Protocol
+            </p>
+        </div>
+
+        <div class="text-right flex flex-col items-end">
+            <!-- Lang Switcher -->
+            <div class="flex gap-2 mb-3 bg-[#2A2A2A] p-1 rounded">
+                <button id="btn-lang-en" onclick="setLang('en')">EN</button>
+                <button id="btn-lang-de" onclick="setLang('de')">DE</button>
+            </div>
+            
+            <div class="text-xs space-y-1 opacity-70 mb-3">
+                <p><span id="lbl-userid">ID</span>: <span id="val-userid" class="font-mono">...</span></p>
+                <p><span id="lbl-lastupdate">Update</span>: <span id="val-lastupdate" class="text-[#00B894]">--:--</span></p>
+            </div>
+
+            <button id="btn-update" onclick="triggerUpdate()" class="px-5 py-2 bg-[#C5A059] text-black font-bold text-sm rounded hover:bg-[#D4AF37] transition shadow-lg transform hover:scale-105 active:scale-95">
+                Simulate Data
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Card 1: Debt Gauge -->
+        <div class="bg-white/5 border border-[#0077B6] rounded-xl p-6 shadow-xl relative overflow-hidden group hover:border-[#00B894] transition-colors duration-500">
+            <h2 id="card1-title" class="text-xl font-bold text-[#0077B6] mb-6 relative z-10">Stability Score</h2>
+            
+            <!-- CSS/HTML Gauge Implementation -->
+            <div class="relative h-48 w-full flex justify-center items-end mb-4">
+                <!-- Gauge Arc Background (Half Circle) -->
+                <div class="absolute w-64 h-32 rounded-t-full border-[20px] border-[#333] border-b-0"></div>
+                <!-- Gauge Arc Active (Overlay - Simplified visual representation) -->
+                <div class="absolute w-64 h-32 rounded-t-full border-[20px] border-b-0 border-[#C5A059] opacity-20"></div>
+                
+                <!-- Needle -->
+                <div class="gauge-needle-container">
+                    <div id="gauge-needle" class="gauge-needle" style="transform: rotate(0deg);"></div>
+                    <div class="gauge-center-dot"></div>
+                </div>
+
+                <div class="absolute bottom-0 text-center w-full">
+                    <div id="gauge-score" class="text-5xl font-black text-white mb-2 transform -translate-y-8">--</div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p id="gauge-status" class="text-lg font-bold mb-2">--</p>
+                <p id="card1-desc" class="text-xs opacity-60 leading-relaxed max-w-xs mx-auto">Description...</p>
+            </div>
+        </div>
+
+        <!-- Card 2: CR Conversion -->
+        <div class="lg:col-span-2 bg-white/5 border border-[#C5A059] rounded-xl p-6 shadow-xl hover:shadow-[#C5A059]/20 transition-shadow duration-500">
+            <h2 id="card2-title" class="text-xl font-bold text-[#C5A059] mb-6">CR Conversion</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <!-- Metric Box 1 -->
+                <div class="bg-white/5 p-4 rounded border border-[#D2B48C]/30">
+                    <p id="lbl-target" class="text-xs uppercase opacity-60 mb-1">Target</p>
+                    <p id="val-target" class="text-2xl font-bold text-[#C5A059]">--</p>
+                </div>
+                <!-- Metric Box 2 -->
+                <div class="bg-white/5 p-4 rounded border border-[#D2B48C]/30">
+                    <p id="lbl-current" class="text-xs uppercase opacity-60 mb-1">Current</p>
+                    <p id="val-current" class="text-2xl font-bold text-[#00B894]">--</p>
+                </div>
+                <!-- Metric Box 3 -->
+                <div class="bg-white/5 p-4 rounded border border-[#D2B48C]/30">
+                    <p id="lbl-progress" class="text-xs uppercase opacity-60 mb-1">Progress</p>
+                    <p id="val-progress" class="text-2xl font-bold text-white">--</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="relative w-full h-8 bg-[#333] rounded-full overflow-hidden mb-4 border border-[#555]">
+                <div id="progress-bar" class="h-full bg-[#00B894] transition-all duration-1000 ease-out flex items-center justify-end px-3 shadow-[0_0_15px_rgba(0,184,148,0.5)]" style="width: 0%">
+                    <span class="text-xs font-black text-black">CR</span>
+                </div>
+            </div>
+
+            <p id="card2-desc" class="text-sm opacity-60 italic">Description...</p>
+        </div>
+
+        <!-- Card 3: Climate Resilience Chart -->
+        <div class="lg:col-span-3 bg-white/5 border border-[#D2B48C] rounded-xl p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="card3-title" class="text-xl font-bold text-[#D2B48C]">Resilience Index</h2>
+                <div class="flex gap-4 text-xs">
+                    <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-[#00B894] mr-2"></span>Resilience</span>
+                    <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-[#0077B6] mr-2"></span>Vulnerability</span>
+                </div>
+            </div>
+
+            <div class="chart-container h-[400px] w-full">
+                <canvas id="climateChart"></canvas>
+            </div>
+
+            <p id="card3-desc" class="text-sm opacity-60 mt-4 text-center max-w-2xl mx-auto">Description...</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 pt-8 border-t border-[#333] text-center text-sm opacity-50 pb-8">
+        <p id="footer-text">Footer...</p>
+    </footer>
+
+</body>
+</html>
+
+</p>
+
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
