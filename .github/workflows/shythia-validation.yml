@@ -1,0 +1,92 @@
+name: Shythia Block Validation
+
+on:
+  push:
+    branches: [ main, develop, 'copilot/**' ]
+    paths:
+      - 'src/shythia-block/**'
+      - 'tests/shythia-block/**'
+      - '.github/workflows/shythia-validation.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/shythia-block/**'
+      - 'tests/shythia-block/**'
+
+jobs:
+  validate-blockchain:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run Shythia Block tests
+      run: npm run test:blockchain
+    
+    - name: Validate blockchain integrity
+      run: |
+        node -e "
+        const { ShythiaBlockchain, ShythiaBlock } = require('./src/shythia-block/block');
+        const blockchain = new ShythiaBlockchain();
+        
+        // Add test blocks
+        for (let i = 1; i <= 5; i++) {
+          const block = new ShythiaBlock(i, Date.now(), { transaction: i * 100 });
+          blockchain.addBlock(block);
+        }
+        
+        // Validate chain
+        const isValid = blockchain.isChainValid();
+        console.log('Blockchain validation:', isValid ? 'PASSED' : 'FAILED');
+        
+        if (!isValid) {
+          process.exit(1);
+        }
+        "
+    
+    - name: Test transaction validation
+      run: |
+        node -e "
+        const { Transaction, TransactionValidator } = require('./src/shythia-block/transaction');
+        
+        // Test valid transaction
+        const tx1 = new Transaction('addr1', 'addr2', 100);
+        const result1 = TransactionValidator.validateStructure(tx1);
+        
+        console.log('Transaction validation:', result1.valid ? 'PASSED' : 'FAILED');
+        
+        if (!result1.valid) {
+          process.exit(1);
+        }
+        
+        // Test invalid transaction
+        const tx2 = { fromAddress: 'addr1', amount: -50 };
+        const result2 = TransactionValidator.validateStructure(tx2);
+        
+        console.log('Invalid transaction detection:', !result2.valid ? 'PASSED' : 'FAILED');
+        
+        if (result2.valid) {
+          process.exit(1);
+        }
+        "
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: shythia-test-results-${{ matrix.node-version }}
+        path: coverage/

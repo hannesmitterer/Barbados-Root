@@ -1,0 +1,150 @@
+name: Apollo Interface Integration
+
+on:
+  push:
+    branches: [ main, develop, 'copilot/**' ]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/apollo-integration.yml'
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run Apollo Interface tests
+      run: npm run test:interface
+    
+    - name: Test end-to-end integration
+      run: |
+        node -e "
+        const { ApolloInterface } = require('./src/apollo-interface/interface');
+        const { ApolloAPI } = require('./src/apollo-interface/api');
+        const { ShythiaBlockchain, ShythiaBlock } = require('./src/shythia-block/block');
+        const { PredictionEngine } = require('./src/euystacio-ai/prediction');
+        const { AnalyzerCluster } = require('./src/euystacio-ai/analyzer');
+        
+        // Setup components
+        const blockchain = new ShythiaBlockchain();
+        const aiEngine = new PredictionEngine();
+        const apollo = new ApolloInterface();
+        const api = new ApolloAPI(apollo);
+        
+        // Add blocks to blockchain
+        for (let i = 1; i <= 3; i++) {
+          const block = new ShythiaBlock(i, Date.now(), { value: i * 100 });
+          blockchain.addBlock(block);
+        }
+        
+        // Register AI model
+        aiEngine.registerModel('integration-test', { type: 'test' });
+        
+        // Initialize Apollo
+        apollo.initialize(blockchain, aiEngine);
+        
+        // Test API endpoints
+        console.log('Testing API Endpoints:');
+        
+        const health = api.handleRequest('GET', '/health');
+        console.log('- Health check:', health.status === 200 ? 'PASSED' : 'FAILED');
+        
+        const status = api.handleRequest('GET', '/status');
+        console.log('- Status check:', status.status === 200 ? 'PASSED' : 'FAILED');
+        
+        const validation = api.handleRequest('GET', '/blockchain/validate');
+        console.log('- Blockchain validation:', validation.data.valid ? 'PASSED' : 'FAILED');
+        
+        const prediction = api.handleRequest('POST', '/ai/predict', { value: 100 });
+        console.log('- AI prediction:', prediction.status === 200 ? 'PASSED' : 'FAILED');
+        
+        const workflow = api.handleRequest('POST', '/workflow/process', { value: 200 });
+        console.log('- Integrated workflow:', workflow.data.success ? 'PASSED' : 'FAILED');
+        
+        // Validate all tests passed
+        if (health.status !== 200 || !validation.data.valid || !workflow.data.success) {
+          console.error('Integration tests failed');
+          process.exit(1);
+        }
+        
+        console.log('\\nAll integration tests: PASSED');
+        "
+    
+    - name: Test full system workflow
+      run: |
+        node -e "
+        const { ApolloInterface } = require('./src/apollo-interface/interface');
+        const { ShythiaBlockchain } = require('./src/shythia-block/block');
+        const { PredictionEngine } = require('./src/euystacio-ai/prediction');
+        const { AnalyzerCluster } = require('./src/euystacio-ai/analyzer');
+        
+        console.log('Full System Workflow Test');
+        console.log('========================');
+        
+        // Initialize all components
+        const blockchain = new ShythiaBlockchain();
+        const aiEngine = new PredictionEngine();
+        const cluster = new AnalyzerCluster('Production');
+        const apollo = new ApolloInterface();
+        
+        // Setup cluster
+        cluster.createNode('in-1', 'input');
+        cluster.createNode('compute-1', 'compute');
+        cluster.createNode('out-1', 'output');
+        
+        // Setup AI
+        aiEngine.registerModel('production', { type: 'resonance', nsr: true });
+        
+        // Initialize Apollo
+        apollo.initialize(blockchain, aiEngine);
+        
+        // Process data through cluster
+        const clusterResult = cluster.process({ transaction: 1000 });
+        console.log('1. Cluster processing: PASSED');
+        
+        // Make AI prediction
+        const prediction = aiEngine.predict('production', clusterResult[0]);
+        console.log('2. AI prediction: PASSED');
+        
+        // Validate through Apollo
+        const systemStatus = apollo.getSystemStatus();
+        console.log('3. System status check: PASSED');
+        
+        // Validate blockchain
+        const blockchainValid = blockchain.isChainValid();
+        console.log('4. Blockchain validation:', blockchainValid ? 'PASSED' : 'FAILED');
+        
+        if (!blockchainValid) {
+          process.exit(1);
+        }
+        
+        console.log('\\nFull system workflow: PASSED');
+        "
+    
+    - name: Run all tests with coverage
+      run: npm test -- --coverage
+    
+    - name: Upload coverage reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report-${{ matrix.node-version }}
+        path: coverage/

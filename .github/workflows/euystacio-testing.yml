@@ -1,0 +1,124 @@
+name: Euystacio-AI Cluster Testing
+
+on:
+  push:
+    branches: [ main, develop, 'copilot/**' ]
+    paths:
+      - 'src/euystacio-ai/**'
+      - 'tests/euystacio-ai/**'
+      - '.github/workflows/euystacio-testing.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/euystacio-ai/**'
+      - 'tests/euystacio-ai/**'
+
+jobs:
+  test-ai-cluster:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run Euystacio-AI tests
+      run: npm run test:ai
+    
+    - name: Simulate analyzer cluster I/O
+      run: |
+        node -e "
+        const { AnalyzerCluster } = require('./src/euystacio-ai/analyzer');
+        
+        // Create cluster with input, compute, and output nodes
+        const cluster = new AnalyzerCluster('Test-Cluster');
+        cluster.createNode('input-1', 'input');
+        cluster.createNode('compute-1', 'compute');
+        cluster.createNode('compute-2', 'compute');
+        cluster.createNode('output-1', 'output');
+        
+        // Run simulation
+        const simulation = cluster.simulate(10);
+        
+        console.log('Cluster Simulation Results:');
+        console.log('- Total iterations:', simulation.totalIterations);
+        console.log('- Results count:', simulation.results.length);
+        console.log('- Cluster nodes:', simulation.clusterStatus.totalNodes);
+        
+        // Validate results
+        if (simulation.results.length !== 10) {
+          console.error('Expected 10 results, got', simulation.results.length);
+          process.exit(1);
+        }
+        
+        console.log('Cluster I/O simulation: PASSED');
+        "
+    
+    - name: Test prediction engine
+      run: |
+        node -e "
+        const { PredictionEngine } = require('./src/euystacio-ai/prediction');
+        
+        const engine = new PredictionEngine();
+        engine.registerModel('resonance', { type: 'ai', nsr: true });
+        
+        // Make predictions
+        const predictions = [];
+        for (let i = 0; i < 5; i++) {
+          const pred = engine.predict('resonance', { value: i * 10 });
+          predictions.push(pred);
+        }
+        
+        console.log('Prediction Engine Results:');
+        console.log('- Total predictions:', predictions.length);
+        console.log('- NSR compliance:', predictions.every(p => p.nsr_compliance));
+        
+        // Validate NSR compliance
+        if (!predictions.every(p => p.nsr_compliance)) {
+          console.error('NSR compliance check failed');
+          process.exit(1);
+        }
+        
+        console.log('Prediction engine: PASSED');
+        "
+    
+    - name: Validate cluster metrics
+      run: |
+        node -e "
+        const { AnalyzerNode } = require('./src/euystacio-ai/analyzer');
+        
+        const node = new AnalyzerNode('compute-test', 'compute');
+        const result = node.processInput({ value: 100 });
+        
+        console.log('Node Metrics:');
+        console.log('- NSR Drift:', result.result.nsr_drift);
+        console.log('- OLF Score:', result.result.olf_score);
+        console.log('- Resonance Freq:', result.result.resonance_freq);
+        
+        // Validate metrics
+        if (result.result.nsr_drift !== 0.000) {
+          console.error('NSR drift should be 0.000');
+          process.exit(1);
+        }
+        
+        console.log('Cluster metrics: PASSED');
+        "
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: euystacio-test-results-${{ matrix.node-version }}
+        path: coverage/

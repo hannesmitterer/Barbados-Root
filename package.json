@@ -1,0 +1,42 @@
+{
+  "name": "barbados-root",
+  "version": "1.0.0",
+  "description": "Unified system for Shythia Block, Euystacio-AI, and Apollo Interface",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:blockchain": "jest tests/shythia-block",
+    "test:ai": "jest tests/euystacio-ai",
+    "test:interface": "jest tests/apollo-interface",
+    "lint": "eslint src/ tests/",
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "blockchain",
+    "ai",
+    "shythia",
+    "euystacio",
+    "apollo",
+    "resonance"
+  ],
+  "author": "Hannes Mitterer",
+  "license": "MIT",
+  "dependencies": {
+    "elliptic": "^6.5.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.55.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}
