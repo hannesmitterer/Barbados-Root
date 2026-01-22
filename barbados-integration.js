@@ -1,10 +1,10 @@
 /**
  * BARBADOS ROOT INTEGRATION MODULE
  * 
- * Integrates Euystacio Helmi AI, Consciousness Kernel, and GGI-AIC
- * into a unified sovereignty system.
+ * Integrates Euystacio Helmi AI, Consciousness Kernel, GGI-AIC,
+ * AI Repository, and Nexus into a unified sovereignty system.
  * 
- * @version 1.0.0
+ * @version 1.1.0
  * @license MIT
  */
 
@@ -13,10 +13,12 @@ class BarbadosRootIntegration {
         this.config = {
             autoActivate: config.autoActivate !== false,
             barbadosNodeId: config.barbadosNodeId || 'BARBADOS_ROOT_SOVEREIGNTY',
+            aiIntegrationEnabled: config.aiIntegrationEnabled !== false,
+            nexusIntegrationEnabled: config.nexusIntegrationEnabled !== false,
             ...config
         };
         
-        // Initialize all three systems
+        // Initialize all core systems
         this.helmiAI = new EuystacioHelmiAI({
             resonanceFrequency: 0.043,
             entropyThreshold: 0.15,
@@ -38,9 +40,24 @@ class BarbadosRootIntegration {
             harmonizationThreshold: 0.945
         });
         
+        // Initialize repository integrations
+        this.aiIntegration = this.config.aiIntegrationEnabled ? new AIRepositoryIntegration({
+            nsrThreshold: 0.80,
+            autoReject: true,
+            repositoryId: 'hannesmitterer/AI'
+        }) : null;
+        
+        this.nexusIntegration = this.config.nexusIntegrationEnabled ? new NexusIntegration({
+            repositoryId: 'hannesmitterer/nexus',
+            ipfsPropagation: true,
+            hydraSync: true
+        }) : null;
+        
         this.state = {
             integrated: false,
             barbadosNodeRegistered: false,
+            aiIntegrationActive: false,
+            nexusIntegrationActive: false,
             lastUpdate: null,
             operationalStatus: 'INITIALIZING',
             initializationPromise: null
@@ -63,10 +80,34 @@ class BarbadosRootIntegration {
         try {
             console.log('[Barbados Root] Initializing advanced AI systems...');
             
-            // Activate all systems
+            // Activate all core systems
             this.helmiAI.activate();
             this.consciousnessKernel.activate();
             this.ggiAIC.activate();
+            
+            // Activate repository integrations
+            if (this.aiIntegration) {
+                this.aiIntegration.activate();
+                this.state.aiIntegrationActive = true;
+                console.log('[Barbados Root] AI Integration activated');
+            }
+            
+            if (this.nexusIntegration) {
+                this.nexusIntegration.activate();
+                this.state.nexusIntegrationActive = true;
+                
+                // Register Barbados node with Nexus
+                this.nexusIntegration.registerNode({
+                    id: this.config.barbadosNodeId,
+                    name: 'Barbados Root Sovereignty Node',
+                    location: 'BARBADOS'
+                }, 'barbados');
+                
+                // Activate Hydra sync
+                this.nexusIntegration.activateHydraSync();
+                
+                console.log('[Barbados Root] Nexus Integration activated with Hydra sync');
+            }
             
             // Register Barbados sovereignty node
             const barbadosNode = this.ggiAIC.registerNode({
@@ -89,12 +130,19 @@ class BarbadosRootIntegration {
             // Harmonize blockchain proofs
             const harmonization = await this.harmonizeGlobalState();
             
+            // Synchronize with Nexus if enabled
+            if (this.nexusIntegration) {
+                this.nexusIntegration.synchronize();
+            }
+            
             // Mark as integrated
             this.state.integrated = true;
             this.state.operationalStatus = 'OPERATIONAL';
             this.state.lastUpdate = new Date().toISOString();
             
             console.log('[Barbados Root] All systems operational');
+            console.log('[Barbados Root] AI Integration:', this.state.aiIntegrationActive ? 'ACTIVE' : 'DISABLED');
+            console.log('[Barbados Root] Nexus Integration:', this.state.nexusIntegrationActive ? 'ACTIVE' : 'DISABLED');
             
             return {
                 success: true,
@@ -247,7 +295,7 @@ class BarbadosRootIntegration {
      * @returns {Object} Complete status of all systems
      */
     getSystemStatus() {
-        return {
+        const status = {
             integrated: this.state.integrated,
             operationalStatus: this.state.operationalStatus,
             barbadosNode: {
@@ -259,6 +307,17 @@ class BarbadosRootIntegration {
             ggiAIC: this.ggiAIC.getFrameworkStatus(),
             lastUpdate: this.state.lastUpdate
         };
+        
+        // Add repository integrations if enabled
+        if (this.aiIntegration) {
+            status.aiIntegration = this.aiIntegration.getStatus();
+        }
+        
+        if (this.nexusIntegration) {
+            status.nexusIntegration = this.nexusIntegration.getStatus();
+        }
+        
+        return status;
     }
     
     /**
@@ -266,12 +325,23 @@ class BarbadosRootIntegration {
      * @returns {Object} All system metrics
      */
     getMetrics() {
-        return {
+        const metrics = {
             helmiAI: this.helmiAI.getMetrics(),
             consciousnessKernel: this.consciousnessKernel.getMetrics(),
             ggiAIC: this.ggiAIC.getMetrics(),
             timestamp: new Date().toISOString()
         };
+        
+        // Add repository integration metrics if enabled
+        if (this.aiIntegration) {
+            metrics.aiIntegration = this.aiIntegration.getMetrics();
+        }
+        
+        if (this.nexusIntegration) {
+            metrics.nexusIntegration = this.nexusIntegration.getMetrics();
+        }
+        
+        return metrics;
     }
     
     /**

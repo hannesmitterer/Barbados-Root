@@ -14,6 +14,8 @@
     <script src="euystacio-helmi-ai.js"></script>
     <script src="consciousness-kernel.js"></script>
     <script src="ggi-aic.js"></script>
+    <script src="ai-integration.js"></script>
+    <script src="nexus-integration.js"></script>
     <script src="barbados-integration.js"></script>
     <script src="chiamata-risonanza.js"></script>
 
@@ -483,6 +485,31 @@
                         opStatusEl.className = 'text-yellow-400 font-bold text-lg';
                     }
                 }
+                
+                // Update repository integrations if available
+                if (status.aiIntegration) {
+                    if (document.getElementById('ai-integration-status')) {
+                        document.getElementById('ai-integration-status').textContent = status.aiIntegration.active ? 'ACTIVE' : 'INACTIVE';
+                    }
+                    if (document.getElementById('ai-nsr-threshold')) {
+                        document.getElementById('ai-nsr-threshold').textContent = status.aiIntegration.nsrThreshold.toFixed(2);
+                    }
+                    if (document.getElementById('ai-acceptance-rate')) {
+                        document.getElementById('ai-acceptance-rate').textContent = status.aiIntegration.acceptanceRate.toFixed(1) + '%';
+                    }
+                }
+                
+                if (status.nexusIntegration) {
+                    if (document.getElementById('nexus-integration-status')) {
+                        document.getElementById('nexus-integration-status').textContent = status.nexusIntegration.active ? 'ACTIVE' : 'INACTIVE';
+                    }
+                    if (document.getElementById('nexus-ipfs-cids')) {
+                        document.getElementById('nexus-ipfs-cids').textContent = status.nexusIntegration.ipfsCIDs || 0;
+                    }
+                    if (document.getElementById('nexus-hydra-sync')) {
+                        document.getElementById('nexus-hydra-sync').textContent = status.nexusIntegration.hydraSyncActive ? 'ACTIVE' : 'INACTIVE';
+                    }
+                }
             } catch (error) {
                 console.error('[Barbados Root] Error updating UI:', error);
             }
@@ -940,6 +967,65 @@
                     All systems enforce NSR (Non-Subjugation Rule), OLF (Organic Life First), and Lex Amoris principles. 
                     Blockchain-backed proofs ensure immutable sovereignty declarations. System operational at 0.043 Hz resonance frequency.
                 </p>
+            </div>
+        </div>
+
+        <!-- Repository Integrations Status -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- AI Integration -->
+            <div class="bg-gradient-to-br from-purple-950/30 to-blue-950/30 border border-purple-700/30 rounded-xl p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                    </svg>
+                    <h4 class="font-bold text-purple-400 text-sm">AI Integration</h4>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-purple-600">Repository:</span>
+                        <span class="text-purple-300 font-mono">hannesmitterer/AI</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-purple-600">Status:</span>
+                        <span id="ai-integration-status" class="text-emerald-400 font-mono">ACTIVE</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-purple-600">NSR Threshold:</span>
+                        <span id="ai-nsr-threshold" class="text-emerald-400 font-mono">0.80</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-purple-600">Acceptance Rate:</span>
+                        <span id="ai-acceptance-rate" class="text-emerald-400 font-mono">100%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nexus Integration -->
+            <div class="bg-gradient-to-br from-cyan-950/30 to-teal-950/30 border border-cyan-700/30 rounded-xl p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/>
+                    </svg>
+                    <h4 class="font-bold text-cyan-400 text-sm">Nexus Integration</h4>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-cyan-600">Repository:</span>
+                        <span class="text-cyan-300 font-mono">hannesmitterer/nexus</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-cyan-600">Status:</span>
+                        <span id="nexus-integration-status" class="text-emerald-400 font-mono">ACTIVE</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-cyan-600">IPFS CIDs:</span>
+                        <span id="nexus-ipfs-cids" class="text-emerald-400 font-mono">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-cyan-600">Hydra Sync:</span>
+                        <span id="nexus-hydra-sync" class="text-emerald-400 font-mono">ACTIVE</span>
+                    </div>
+                </div>
             </div>
         </div>
 
