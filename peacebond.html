@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbados Peacebond Platform - AI-Driven Peace Initiatives</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Peacebond System Scripts -->
+    <script src="peacebond-contract.js"></script>
+    <script src="ai-conflict-resolution.js"></script>
+    <script src="peacebond-init.js"></script>
+    
+    <style>
+        :root {
+            --peace-emerald: #10b981;
+            --peace-blue: #0077B6;
+            --peace-gold: #C5A059;
+            --deep-bg: #1C1C1C;
+        }
+        
+        body {
+            background-color: var(--deep-bg);
+            color: #D2B48C;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .glow-emerald {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .glow-gold {
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.3);
+        }
+        
+        .pulse-peace {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-12 pb-6 border-b-2 border-emerald-500/30">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-black text-emerald-500 mb-2">
+                    🌍 PEACEBOND PLATFORM
+                </h1>
+                <p class="text-xl text-emerald-300/80">
+                    AI-Driven Peace Initiatives • Barbados-Root
+                </p>
+                <p class="text-sm text-gray-400 mt-1">
+                    Blockchain-Based Conflict Resolution & Community Rebuilding
+                </p>
+            </div>
+            
+            <div class="flex flex-col items-end gap-3">
+                <div class="flex gap-2">
+                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full border border-emerald-500/50">
+                        🤖 AI Active
+                    </span>
+                    <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full border border-blue-500/50">
+                        🔗 Blockchain Synced
+                    </span>
+                </div>
+                <button onclick="refreshDashboard()" class="px-6 py-2 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 transition transform hover:scale-105">
+                    ↻ Refresh Dashboard
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Statistics Overview -->
+    <section class="max-w-7xl mx-auto mb-12">
+        <h2 class="text-2xl font-bold text-emerald-400 mb-6">📊 System Overview</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white/5 border border-emerald-500/30 rounded-xl p-6 text-center card-hover">
+                <div class="text-5xl font-black text-emerald-500" id="stat-total">0</div>
+                <div class="text-sm text-gray-400 mt-2">Total Peacebonds</div>
+            </div>
+            <div class="bg-white/5 border border-blue-500/30 rounded-xl p-6 text-center card-hover">
+                <div class="text-5xl font-black text-blue-400" id="stat-active">0</div>
+                <div class="text-sm text-gray-400 mt-2">Active Initiatives</div>
+            </div>
+            <div class="bg-white/5 border border-yellow-500/30 rounded-xl p-6 text-center card-hover">
+                <div class="text-5xl font-black text-yellow-400" id="stat-value">0 CR</div>
+                <div class="text-sm text-gray-400 mt-2">Total Value</div>
+            </div>
+            <div class="bg-white/5 border border-purple-500/30 rounded-xl p-6 text-center card-hover">
+                <div class="text-5xl font-black text-purple-400" id="stat-resonance">0%</div>
+                <div class="text-sm text-gray-400 mt-2">Avg Resonance</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        
+        <!-- Active Peacebonds List -->
+        <div class="bg-white/5 border border-emerald-500/30 rounded-xl p-6">
+            <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-2">
+                📋 Active Peacebonds
+            </h2>
+            <div id="peacebond-list" class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Issue New Peacebond Form -->
+        <div class="bg-white/5 border border-blue-500/30 rounded-xl p-6">
+            <h2 class="text-2xl font-bold text-blue-400 mb-6">➕ Issue New Peacebond</h2>
+            <form id="issue-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Issuer Name</label>
+                    <input type="text" id="issuer" class="w-full bg-black/30 border border-gray-600 rounded px-4 py-2 text-white" placeholder="e.g., Bridgetown Council" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Purpose</label>
+                    <textarea id="purpose" class="w-full bg-black/30 border border-gray-600 rounded px-4 py-2 text-white" rows="2" placeholder="Describe the peace initiative..." required></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Value (CR)</label>
+                        <input type="number" id="value" class="w-full bg-black/30 border border-gray-600 rounded px-4 py-2 text-white" placeholder="50000" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Duration (days)</label>
+                        <input type="number" id="duration" class="w-full bg-black/30 border border-gray-600 rounded px-4 py-2 text-white" placeholder="365" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Allocation</label>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span>Community:</span>
+                            <input type="number" id="alloc-community" class="bg-black/30 border border-gray-600 rounded px-2 py-1 text-white w-16" value="40" min="0" max="100">%
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span>Ecological:</span>
+                            <input type="number" id="alloc-ecological" class="bg-black/30 border border-gray-600 rounded px-2 py-1 text-white w-16" value="30" min="0" max="100">%
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span>Resolution:</span>
+                            <input type="number" id="alloc-resolution" class="bg-black/30 border border-gray-600 rounded px-2 py-1 text-white w-16" value="20" min="0" max="100">%
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span>Sovereignty:</span>
+                            <input type="number" id="alloc-sovereignty" class="bg-black/30 border border-gray-600 rounded px-2 py-1 text-white w-16" value="10" min="0" max="100">%
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 rounded-lg hover:bg-blue-400 transition transform hover:scale-105">
+                    🚀 Issue Peacebond
+                </button>
+            </form>
+        </div>
+
+        <!-- AI Conflict Analysis -->
+        <div class="bg-white/5 border border-purple-500/30 rounded-xl p-6">
+            <h2 class="text-2xl font-bold text-purple-400 mb-6">🤖 AI Conflict Analysis</h2>
+            <form id="conflict-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Conflict Type</label>
+                    <select id="conflict-type" class="w-full bg-black/30 border border-gray-600 rounded px-4 py-2 text-white">
+                        <option value="resource">Resource Dispute</option>
+                        <option value="territorial">Territorial</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="economic">Economic</option>
+                        <option value="political">Political</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Severity</label>
+                        <select id="conflict-severity" class="w-full bg-black/30 border border-gray-600 rounded px-4 py-2 text-white">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Duration (days)</label>
+                        <input type="number" id="conflict-duration" class="w-full bg-black/30 border border-gray-600 rounded px-4 py-2 text-white" value="90">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-purple-500 text-white font-bold py-3 rounded-lg hover:bg-purple-400 transition transform hover:scale-105">
+                    🔍 Analyze Conflict
+                </button>
+            </form>
+
+            <div id="analysis-results" class="mt-6 hidden">
+                <h3 class="text-lg font-bold text-purple-300 mb-3">Analysis Results</h3>
+                <div id="analysis-content" class="space-y-3 text-sm">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Peace Metrics Chart -->
+        <div class="bg-white/5 border border-yellow-500/30 rounded-xl p-6">
+            <h2 class="text-2xl font-bold text-yellow-400 mb-6">📈 Peace Metrics</h2>
+            <div class="h-64">
+                <canvas id="peace-metrics-chart"></canvas>
+            </div>
+            <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
+                <div class="bg-black/30 p-3 rounded border border-gray-700">
+                    <div class="text-gray-400">Cooperation Level</div>
+                    <div class="text-2xl font-bold text-emerald-400" id="metric-cooperation">--</div>
+                </div>
+                <div class="bg-black/30 p-3 rounded border border-gray-700">
+                    <div class="text-gray-400">Trust Score</div>
+                    <div class="text-2xl font-bold text-blue-400" id="metric-trust">--</div>
+                </div>
+                <div class="bg-black/30 p-3 rounded border border-gray-700">
+                    <div class="text-gray-400">Violence Index</div>
+                    <div class="text-2xl font-bold text-red-400" id="metric-violence">--</div>
+                </div>
+                <div class="bg-black/30 p-3 rounded border border-gray-700">
+                    <div class="text-gray-400">Progress</div>
+                    <div class="text-2xl font-bold text-yellow-400" id="metric-progress">--</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Resonance Integration Notice -->
+    <section class="max-w-7xl mx-auto mb-12">
+        <div class="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-8">
+            <h2 class="text-2xl font-bold text-emerald-400 mb-4">🌐 Resonance Bridge Integration</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <div>
+                    <div class="font-bold text-emerald-300 mb-2">NSR Protocol Active</div>
+                    <div class="text-gray-400">Non-violent approaches prioritized in all conflict resolution strategies</div>
+                </div>
+                <div>
+                    <div class="font-bold text-blue-300 mb-2">Blockchain Anchoring</div>
+                    <div class="text-gray-400">All peacebond transactions synchronized to distributed ledger nodes</div>
+                </div>
+                <div>
+                    <div class="font-bold text-purple-300 mb-2">AI Transparency</div>
+                    <div class="text-gray-400">Immutable audit logs ensure ethical AI compliance and public accountability</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto border-t border-gray-700 pt-8 pb-8 text-center text-sm text-gray-500">
+        <p class="mb-2">🌍 Barbados-Root Peacebond Platform • Powered by Ethical AI & Blockchain</p>
+        <p>Resonance School Governance • NSR + OLF Protocols Active • MIT License</p>
+        <p class="mt-4 text-xs">
+            "Peace is not the absence of conflict, but the presence of justice and cooperation."
+        </p>
+    </footer>
+
+    <script>
+        // Global state
+        let system = null;
+        let metricsChart = null;
+
+        // Initialize system when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.peacebondSystem) {
+                system = window.peacebondSystem;
+                refreshDashboard();
+            } else {
+                console.error('Peacebond system not initialized');
+            }
+        });
+
+        function refreshDashboard() {
+            if (!system) return;
+
+            // Update statistics
+            const stats = system.peacebondContract.getStatistics();
+            document.getElementById('stat-total').textContent = stats.totalPeacebonds;
+            document.getElementById('stat-active').textContent = stats.activePeacebonds;
+            document.getElementById('stat-value').textContent = formatValue(stats.totalValue) + ' CR';
+            document.getElementById('stat-resonance').textContent = stats.averageResonanceScore.toFixed(1) + '%';
+
+            // Update peacebond list
+            updatePeacebondList();
+
+            // Update peace metrics
+            updatePeaceMetrics();
+        }
+
+        function updatePeacebondList() {
+            const bonds = system.peacebondContract.listActivePeacebonds();
+            const listEl = document.getElementById('peacebond-list');
+            
+            if (bonds.length === 0) {
+                listEl.innerHTML = '<p class="text-gray-500 text-center py-8">No active peacebonds. Issue one to get started!</p>';
+                return;
+            }
+
+            listEl.innerHTML = bonds.map(bond => {
+                const tracking = system.peacebondContract.trackPeacebond(bond.id);
+                const progress = parseFloat(tracking.tracking.progress);
+                
+                return `
+                    <div class="bg-black/30 border border-emerald-500/30 rounded-lg p-4 card-hover">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-bold text-emerald-300">${bond.id}</div>
+                                <div class="text-sm text-gray-400">${bond.issuer}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-yellow-400">${formatValue(bond.value)} CR</div>
+                                <div class="text-xs text-gray-500">${bond.status}</div>
+                            </div>
+                        </div>
+                        <div class="text-sm mb-3">${bond.purpose}</div>
+                        <div class="mb-2">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Progress: ${tracking.tracking.milestonesCompleted}/${tracking.tracking.totalMilestones} milestones</span>
+                                <span>${progress.toFixed(0)}%</span>
+                            </div>
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 text-xs">
+                            <span class="text-gray-500">Resonance: <span class="text-emerald-400">${bond.resonanceScore}%</span></span>
+                            <span class="text-gray-500">Days Active: <span class="text-blue-400">${tracking.tracking.daysActive}</span></span>
+                            <span class="text-gray-500">Expires: <span class="text-yellow-400">${tracking.tracking.daysUntilExpiry}d</span></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePeaceMetrics() {
+            // Example metrics - in production, these would come from real dispute monitoring
+            const exampleMetrics = {
+                cooperationLevel: 0.75,
+                trustScore: 0.83,
+                violenceIndex: 0.12,
+                progressTowardPeace: 0.68
+            };
+
+            document.getElementById('metric-cooperation').textContent = (exampleMetrics.cooperationLevel * 100).toFixed(0) + '%';
+            document.getElementById('metric-trust').textContent = (exampleMetrics.trustScore * 100).toFixed(0) + '%';
+            document.getElementById('metric-violence').textContent = (exampleMetrics.violenceIndex * 100).toFixed(0) + '%';
+            document.getElementById('metric-progress').textContent = (exampleMetrics.progressTowardPeace * 100).toFixed(0) + '%';
+
+            // Update chart
+            updateMetricsChart(exampleMetrics);
+        }
+
+        function updateMetricsChart(metrics) {
+            const ctx = document.getElementById('peace-metrics-chart').getContext('2d');
+            
+            if (metricsChart) {
+                metricsChart.destroy();
+            }
+
+            metricsChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Cooperation', 'Trust', 'Progress', 'Safety', 'Sustainability'],
+                    datasets: [{
+                        label: 'Peace Metrics',
+                        data: [
+                            metrics.cooperationLevel * 100,
+                            metrics.trustScore * 100,
+                            metrics.progressTowardPeace * 100,
+                            (1 - metrics.violenceIndex) * 100,
+                            75
+                        ],
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(16, 185, 129, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: '#9CA3AF' },
+                            grid: { color: '#374151' },
+                            pointLabels: { color: '#D1D5DB' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#D1D5DB' } }
+                    }
+                }
+            });
+        }
+
+        // Form handlers
+        document.getElementById('issue-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const bond = system.peacebondContract.issuePeacebond({
+                issuer: document.getElementById('issuer').value,
+                purpose: document.getElementById('purpose').value,
+                value: parseInt(document.getElementById('value').value),
+                expiryDate: new Date(Date.now() + parseInt(document.getElementById('duration').value) * 24 * 60 * 60 * 1000).toISOString(),
+                allocation: {
+                    communityRebuilding: parseInt(document.getElementById('alloc-community').value),
+                    ecologicalPeace: parseInt(document.getElementById('alloc-ecological').value),
+                    conflictResolution: parseInt(document.getElementById('alloc-resolution').value),
+                    sovereigntySupport: parseInt(document.getElementById('alloc-sovereignty').value)
+                },
+                redemptionMechanism: 'milestone-based',
+                milestones: [
+                    { name: 'Initial assessment', completed: false },
+                    { name: 'Planning phase', completed: false },
+                    { name: 'Implementation', completed: false },
+                    { name: 'Evaluation', completed: false }
+                ]
+            });
+
+            alert(`✅ Peacebond ${bond.id} issued successfully!`);
+            e.target.reset();
+            refreshDashboard();
+        });
+
+        document.getElementById('conflict-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const analysis = system.aiResolution.analyzeDispute({
+                type: document.getElementById('conflict-type').value,
+                severity: document.getElementById('conflict-severity').value,
+                duration: parseInt(document.getElementById('conflict-duration').value),
+                parties: ['Party A', 'Party B'],
+                resources: { mediator: true, funding: true }
+            });
+
+            const resultsDiv = document.getElementById('analysis-results');
+            const contentDiv = document.getElementById('analysis-content');
+            
+            contentDiv.innerHTML = `
+                <div class="bg-black/30 p-3 rounded border border-purple-500/30">
+                    <div class="font-bold text-purple-300 mb-2">Top Recommended Strategy</div>
+                    <div class="text-white mb-1">${analysis.suggestedOutcomes[0].name}</div>
+                    <div class="text-sm text-gray-400">Success Probability: ${(analysis.suggestedOutcomes[0].successProbability * 100).toFixed(1)}%</div>
+                    <div class="text-sm text-gray-400">Estimated Duration: ${analysis.suggestedOutcomes[0].estimatedDuration} days</div>
+                </div>
+                <div class="bg-black/30 p-3 rounded border border-blue-500/30">
+                    <div class="font-bold text-blue-300 mb-2">Risk Assessment</div>
+                    <div class="text-white">Risk Level: ${analysis.analysis.riskLevel}</div>
+                    <div class="text-sm text-gray-400">Complexity Score: ${analysis.analysis.complexityScore.toFixed(0)}/100</div>
+                </div>
+                <div class="bg-black/30 p-3 rounded border border-emerald-500/30">
+                    <div class="font-bold text-emerald-300 mb-2">Key Recommendations</div>
+                    <ul class="text-sm space-y-1">
+                        ${analysis.recommendations.slice(0, 3).map(r => `<li>• ${r}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            resultsDiv.classList.remove('hidden');
+        });
+
+        function formatValue(value) {
+            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+            if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+            return value.toString();
+        }
+    </script>
+</body>
+</html>
