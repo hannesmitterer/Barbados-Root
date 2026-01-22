@@ -1,0 +1,31 @@
+# Runtime artifacts from deployment scripts
+ipfs_validation_report.json
+blockchain_timestamp.json
+heartbeat_sync_report.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
