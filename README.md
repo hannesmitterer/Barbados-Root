@@ -31,7 +31,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for complete documentation, verification proc
 
 ### Security
 
-- ✓ CodeQL scan passed - no vulnerabilities
+- ✓ CodeQL scanning planned for CI integration
 - ✓ SHA-256 integrity verification
 - ✓ Ownership validation (Hannes Mitterer)
 - ✓ Access control: "Lex Amoris holders only"

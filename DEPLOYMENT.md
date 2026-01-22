@@ -29,8 +29,8 @@ The binary header (`anchor_header.bin`) contains three main sections:
 #### 3. Vakuum-Brücke Bridge Logic (OFFSET 0500)
 ```
 [OFFSET 0500] 56 42 5F 42 52 49 44 47 45  // VB_BRIDGE
-[OFFSET 0509] 7B 22 72 65 73 6F 6E 61 6E 63 65 3A 20 74 72 75 65 7D  // {"resonance: true}
-[OFFSET 0518] 63 65 5F 6C 6F 63 6B 3A 31  // ce_lock:1
+[OFFSET 0509] 7B 22 72 65 73 6F 6E 61 6E 63 65 22 3A 20 74 72 75 65 7D  // {"resonance": true}
+[OFFSET 051C] 63 65 5F 6C 6F 63 6B 3A 31  // ce_lock:1
 ```
 
 ## Components
@@ -256,7 +256,7 @@ tar -czf barbados-root-backup.tar.gz anchor_header.bin scripts/ *.json
 
 ## Technical Specifications
 
-- **Binary Header Size**: 1062 bytes
+- **Binary Header Size**: 2048 bytes (2KB)
 - **Hash Algorithm**: SHA-256
 - **IPFS Version**: v0 (QmHash format)
 - **Blockchain Network**: Ethereum/IPFS Hybrid
