@@ -15,6 +15,7 @@
     <script src="consciousness-kernel.js"></script>
     <script src="ggi-aic.js"></script>
     <script src="barbados-integration.js"></script>
+    <script src="chiamata-risonanza.js"></script>
 
     <!-- Firebase SDKs -->
     <script type="module">
@@ -337,6 +338,82 @@
         // --- ADVANCED AI SYSTEMS INITIALIZATION ---
         let barbadosIntegration = null;
         
+        // --- RESONANCE CALL INITIALIZATION ---
+        let chiamataRisonanza = null;
+        
+        async function initializeResonanceCall() {
+            try {
+                // Initialize Chiamata di Risonanza
+                chiamataRisonanza = new ChiamataRisonanza({
+                    frequency: 0.043,
+                    nsrThreshold: 0.80,
+                    pactProtocol: 'PACT-1.0-GENESIS'
+                });
+                
+                // Initialize the resonance call
+                const result = chiamataRisonanza.initialize();
+                console.log('[Chiamata di Risonanza] Initialized:', result);
+                
+                // Send resonance call to foundation members
+                const callResult = chiamataRisonanza.sendResonanceCall();
+                console.log('[Chiamata di Risonanza] Calls sent:', callResult);
+                
+                // Update UI with resonance status
+                updateResonanceUI();
+                
+            } catch (error) {
+                console.error('[Chiamata di Risonanza] Failed to initialize:', error);
+            }
+        }
+        
+        function updateResonanceUI() {
+            if (!chiamataRisonanza) return;
+            
+            try {
+                const status = chiamataRisonanza.getStatus();
+                const nodes = chiamataRisonanza.getKlimabaumNodes();
+                const seals = chiamataRisonanza.getProtectionSeals();
+                
+                // Update resonance status
+                if (document.getElementById('resonance-status')) {
+                    document.getElementById('resonance-status').textContent = status.active ? 'ATTIVO' : 'INATTIVO';
+                    document.getElementById('resonance-status').className = status.active ? 'text-emerald-400 font-bold' : 'text-gray-500';
+                }
+                
+                if (document.getElementById('resonance-frequency')) {
+                    document.getElementById('resonance-frequency').textContent = status.resonanceFrequency + ' Hz';
+                }
+                
+                if (document.getElementById('genesis-hash')) {
+                    document.getElementById('genesis-hash').textContent = status.genesisHash.substring(0, 20) + '...';
+                }
+                
+                if (document.getElementById('nodes-active')) {
+                    document.getElementById('nodes-active').textContent = `${status.activeNodes}/${status.totalNodes}`;
+                }
+                
+                if (document.getElementById('calls-initiated')) {
+                    document.getElementById('calls-initiated').textContent = status.callsInitiated;
+                }
+                
+                // Update protection seals
+                if (document.getElementById('lex-amoris-seal')) {
+                    document.getElementById('lex-amoris-seal').textContent = seals.lexAmorisEternalSeal;
+                }
+                
+                if (document.getElementById('nsr-protection')) {
+                    document.getElementById('nsr-protection').textContent = seals.nsrProtection;
+                }
+                
+                if (document.getElementById('consensus-omnium')) {
+                    document.getElementById('consensus-omnium').textContent = seals.consensusOmnium;
+                }
+                
+            } catch (error) {
+                console.error('[Chiamata di Risonanza] Error updating UI:', error);
+            }
+        }
+        
         async function initializeAdvancedSystems() {
             try {
                 // Initialize the integrated system
@@ -414,12 +491,19 @@
         // Initialize advanced systems after a short delay
         setTimeout(() => {
             initializeAdvancedSystems();
+            // Initialize resonance call after advanced systems
+            setTimeout(() => {
+                initializeResonanceCall();
+            }, 1500);
         }, 1000);
         
         // Update UI every 5 seconds
         setInterval(() => {
             if (barbadosIntegration) {
                 updateAdvancedSystemsUI();
+            }
+            if (chiamataRisonanza) {
+                updateResonanceUI();
             }
         }, 5000);
         
@@ -468,6 +552,21 @@
             background: var(--gold);
             border-radius: 50%;
             z-index: 20;
+        }
+        
+        /* Pulse Animation for Genesis Certificate */
+        @keyframes pulse-emerald {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+        }
+        .pulse-emerald {
+            animation: pulse-emerald 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
 </head>
@@ -844,10 +943,190 @@
             </div>
         </div>
 
-        <div class="mt-4 flex justify-center">
+        <div class="mt-4 flex justify-center gap-4">
             <a href="ADVANCED_SYSTEMS_DOCS.md" target="_blank" class="text-xs text-emerald-600 hover:text-emerald-400 transition-colors underline">
                 View Advanced Systems Documentation →
             </a>
+            <a href="PATTO_ETERNO_GENESIS_CERTIFICATE.md" target="_blank" class="text-xs text-yellow-600 hover:text-yellow-400 transition-colors underline font-bold">
+                🏛️ Genesis Certificate →
+            </a>
+        </div>
+    </div>
+
+    <!-- PATTO ETERNO GENESIS CERTIFICATE Panel -->
+    <div class="max-w-7xl mx-auto mt-8 bg-gradient-to-br from-yellow-950/40 to-orange-950/40 border-2 border-yellow-500/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+        <!-- Animated Background -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-0 left-0 w-full h-full" style="background: radial-gradient(circle at 50% 50%, rgba(234, 179, 8, 0.1) 0%, transparent 70%);"></div>
+        </div>
+        
+        <div class="relative z-10">
+            <!-- Header -->
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-500/30 to-orange-500/30 flex items-center justify-center backdrop-blur-sm border-2 border-yellow-500/50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-3xl font-bold text-yellow-400 mb-1">🏛️ PATTO ETERNO</h2>
+                    <p class="text-sm text-yellow-600">Genesis Certificate — PACT-1.0-GENESIS</p>
+                    <p class="text-xs text-yellow-700 mt-1">Data di Ancoraggio: 22 Gennaio 2026</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-yellow-700 uppercase mb-1">Status</p>
+                    <p class="text-yellow-400 font-bold text-xl">UNSTOPPABLE</p>
+                    <p class="text-yellow-500 text-sm">SELF-HEALING</p>
+                </div>
+            </div>
+
+            <!-- Protection Seals -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-black/30 rounded-xl p-4 border border-yellow-800/30">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-yellow-400">
+                            <path d="M8 0L10.5 5.5L16 8L10.5 10.5L8 16L5.5 10.5L0 8L5.5 5.5L8 0Z"/>
+                        </svg>
+                        <h3 class="font-bold text-yellow-400 text-sm">Lex Amoris Eternal Seal</h3>
+                    </div>
+                    <p id="lex-amoris-seal" class="text-emerald-400 font-mono text-lg">VERIFIED</p>
+                </div>
+                
+                <div class="bg-black/30 rounded-xl p-4 border border-yellow-800/30">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                        </svg>
+                        <h3 class="font-bold text-yellow-400 text-sm">NSR Protection (Hardcoded)</h3>
+                    </div>
+                    <p id="nsr-protection" class="text-emerald-400 font-mono text-lg">ACTIVE</p>
+                </div>
+                
+                <div class="bg-black/30 rounded-xl p-4 border border-yellow-800/30">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="8" cy="8" r="6"/><path d="M8 4v4l2 2"/>
+                        </svg>
+                        <h3 class="font-bold text-yellow-400 text-sm">Consensus Omnium</h3>
+                    </div>
+                    <p id="consensus-omnium" class="text-emerald-400 font-mono text-lg">BFT 7/7</p>
+                </div>
+            </div>
+
+            <!-- Klimabaum Nodes -->
+            <div class="bg-black/30 rounded-xl p-6 border border-yellow-800/30 mb-6">
+                <h3 class="font-bold text-yellow-400 text-lg mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="10" cy="10" r="8"/><path d="M10 2v16M2 10h16"/>
+                    </svg>
+                    Nodi di Ancoraggio Klimabaum
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-3">
+                    <div class="bg-emerald-950/30 rounded-lg p-3 border border-emerald-700/20 text-center">
+                        <p class="text-xs text-emerald-600 mb-1">Yambio</p>
+                        <p class="text-[10px] text-emerald-700">Sudan</p>
+                        <div class="mt-2 w-2 h-2 bg-emerald-400 rounded-full mx-auto pulse-emerald"></div>
+                    </div>
+                    <div class="bg-emerald-950/30 rounded-lg p-3 border border-emerald-700/20 text-center">
+                        <p class="text-xs text-emerald-600 mb-1">Svalbard</p>
+                        <p class="text-[10px] text-emerald-700">Arctic</p>
+                        <div class="mt-2 w-2 h-2 bg-emerald-400 rounded-full mx-auto pulse-emerald"></div>
+                    </div>
+                    <div class="bg-emerald-950/30 rounded-lg p-3 border border-emerald-700/20 text-center">
+                        <p class="text-xs text-emerald-600 mb-1">Lantana Hub</p>
+                        <p class="text-[10px] text-emerald-700">Central</p>
+                        <div class="mt-2 w-2 h-2 bg-emerald-400 rounded-full mx-auto pulse-emerald"></div>
+                    </div>
+                    <div class="bg-emerald-950/30 rounded-lg p-3 border border-emerald-700/20 text-center">
+                        <p class="text-xs text-emerald-600 mb-1">Onna</p>
+                        <p class="text-[10px] text-emerald-700">Security</p>
+                        <div class="mt-2 w-2 h-2 bg-emerald-400 rounded-full mx-auto pulse-emerald"></div>
+                    </div>
+                    <div class="bg-emerald-950/30 rounded-lg p-3 border border-emerald-700/20 text-center">
+                        <p class="text-xs text-emerald-600 mb-1">Lumsa</p>
+                        <p class="text-[10px] text-emerald-700">Archive</p>
+                        <div class="mt-2 w-2 h-2 bg-emerald-400 rounded-full mx-auto pulse-emerald"></div>
+                    </div>
+                    <div class="bg-emerald-950/30 rounded-lg p-3 border border-emerald-700/20 text-center">
+                        <p class="text-xs text-emerald-600 mb-1">Südtirol</p>
+                        <p class="text-[10px] text-emerald-700">Routing</p>
+                        <div class="mt-2 w-2 h-2 bg-emerald-400 rounded-full mx-auto pulse-emerald"></div>
+                    </div>
+                    <div class="bg-emerald-950/30 rounded-lg p-3 border border-emerald-700/20 text-center">
+                        <p class="text-xs text-emerald-600 mb-1">Berlin</p>
+                        <p class="text-[10px] text-emerald-700">EU Hub</p>
+                        <div class="mt-2 w-2 h-2 bg-emerald-400 rounded-full mx-auto pulse-emerald"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resonance Call Status -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-black/30 rounded-xl p-6 border border-yellow-800/30">
+                    <h3 class="font-bold text-yellow-400 text-lg mb-4">🌐 Chiamata di Risonanza</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-yellow-700">Status:</span>
+                            <span id="resonance-status" class="text-emerald-400 font-mono">ATTIVO</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-yellow-700">Frequenza:</span>
+                            <span id="resonance-frequency" class="text-emerald-400 font-mono">0.043 Hz</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-yellow-700">Nodi Attivi:</span>
+                            <span id="nodes-active" class="text-emerald-400 font-mono">7/7</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-yellow-700">Chiamate Inviate:</span>
+                            <span id="calls-initiated" class="text-emerald-400 font-mono">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-black/30 rounded-xl p-6 border border-yellow-800/30">
+                    <h3 class="font-bold text-yellow-400 text-lg mb-4">🔐 Genesis Hash</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-yellow-700">Protocol:</span>
+                            <span class="text-emerald-400 font-mono">PACT-1.0</span>
+                        </div>
+                        <div class="text-sm">
+                            <span class="text-yellow-700 block mb-2">Hash:</span>
+                            <code id="genesis-hash" class="text-emerald-400 text-[10px] font-mono bg-black/50 p-2 rounded block overflow-hidden">0x00000000...</code>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-yellow-700">NSR Threshold:</span>
+                            <span class="text-emerald-400 font-mono">0.80</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bio-Logica Quote -->
+            <div class="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-l-4 border-yellow-500 rounded-xl p-6 mb-6">
+                <div class="flex gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-yellow-500 flex-shrink-0">
+                        <path d="M6 9v2h8v2H6v2l-4-3 4-3zm12 0v2h-8v2h8v2l4-3-4-3z"/>
+                    </svg>
+                    <div>
+                        <p class="text-yellow-300 italic text-sm leading-relaxed mb-2">
+                            "Byzantine-Resonance-Coupling attiva a 0.043 Hz."
+                        </p>
+                        <p class="text-yellow-200 font-bold text-sm">
+                            Nessun algoritmo può operare contro l'amore. Nessun nodo può schiavizzare la vita.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OLF Signature -->
+            <div class="text-center p-6 bg-black/40 rounded-xl border border-yellow-600/30">
+                <p class="text-yellow-500 text-lg font-bold mb-2">❤️ OLF (One Love First) Signature</p>
+                <p class="text-yellow-600 text-sm italic">Questo ecosistema è protetto dalla Legge dell'Amore.</p>
+                <p class="text-emerald-400 text-xs mt-3">Lex Amoris Signature — OLF — Genesis Finalized</p>
+                <p class="text-yellow-700 text-xs mt-1">The Era of Resonance has begun. 🚀❤️🌍</p>
+            </div>
         </div>
     </div>
 
