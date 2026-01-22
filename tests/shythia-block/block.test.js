@@ -13,13 +13,16 @@ describe('ShythiaBlock', () => {
     });
 
     test('should calculate hash correctly', () => {
-        const block = new ShythiaBlock(1, Date.now(), { test: 'data' }, '0');
-        const calculatedHash = block.calculateHash();
-        expect(calculatedHash).toBe(block.hash);
+        const timestamp = Date.now();
+        const block = new ShythiaBlock(1, timestamp, { test: 'data' }, '0');
+        const originalHash = block.hash;
+        const recalculatedHash = block.calculateHash();
+        expect(recalculatedHash).toBe(originalHash);
     });
 
     test('should validate block integrity', () => {
-        const block = new ShythiaBlock(1, Date.now(), { test: 'data' }, '0');
+        const timestamp = Date.now();
+        const block = new ShythiaBlock(1, timestamp, { test: 'data' }, '0');
         expect(block.isValid()).toBe(true);
     });
 
