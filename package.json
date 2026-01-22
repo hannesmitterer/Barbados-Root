@@ -1,0 +1,34 @@
+{
+  "name": "barbados-root",
+  "version": "1.0.0",
+  "description": "Barbados Root - Ethical AI Vector & Bridgetown Protocol with Binary Metadata Anchoring",
+  "main": "metadata-anchor.js",
+  "scripts": {
+    "test": "node metadata-anchor.test.js",
+    "validate": "node -e \"console.log('✅ Metadata Anchor module validated')\" && node metadata-anchor.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hannesmitterer/Barbados-Root.git"
+  },
+  "keywords": [
+    "metadata",
+    "ipfs",
+    "blockchain",
+    "governance",
+    "anchoring",
+    "timestamping",
+    "node-sync",
+    "immutability",
+    "resonance-school"
+  ],
+  "author": "Hannes Mitterer (Seedbringer)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hannesmitterer/Barbados-Root/issues"
+  },
+  "homepage": "https://github.com/hannesmitterer/Barbados-Root#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
