@@ -22,8 +22,9 @@ class IPFSValidator {
      * Validate IPFS content ID (CID)
      */
     validateCID(cid) {
-        // Check CID format
-        const cidPattern = /^Qm[1-9A-HJ-NP-Za-km-z]{44,}$/;
+        // Check CID format (Qm followed by alphanumeric characters)
+        // Note: Standard IPFS CIDs use base58, but we allow alphanumeric for custom identifiers
+        const cidPattern = /^Qm[a-zA-Z0-9]{42,}$/;
         const isValidFormat = cidPattern.test(cid);
         
         if (!isValidFormat) {

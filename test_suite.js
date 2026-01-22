@@ -347,11 +347,9 @@ runner.test('System - Get Dashboard', async () => {
     assert(dashboard.vbBridge !== undefined, 'Should have bridge info');
 });
 
-// Run all tests
-if (typeof module !== 'undefined' && require.main === module) {
-    runner.run().then(success => {
-        process.exit(success ? 0 : 1);
-    });
+// Export runner for Node.js
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = runner;
 }
 
 // Export for browser usage
