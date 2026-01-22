@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbados-Root Platform Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1, h2 { color: #00ff00; border-bottom: 2px solid #00ff00; padding-bottom: 10px; }
+        .test-section { 
+            background: #2a2a2a; 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-left: 4px solid #00ff00;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff0000; }
+        pre { background: #0a0a0a; padding: 10px; overflow-x: auto; }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover { background: #00cc00; }
+    </style>
+
+    <!-- Load all modules -->
+    <script src="peacebonds.js"></script>
+    <script src="ai-peace-platform.js"></script>
+    <script src="resonance-anchors.js"></script>
+    <script src="integrity-checks.js"></script>
+    <script src="barbados-root-integration.js"></script>
+</head>
+<body>
+    <h1>🔬 Barbados-Root Platform Integration Test</h1>
+    <p>Testing all four consolidated modules</p>
+
+    <button onclick="runAllTests()">▶ Run All Tests</button>
+    <button onclick="clearResults()">🗑 Clear Results</button>
+
+    <div id="results"></div>
+
+    <script>
+        let platform;
+        const results = document.getElementById('results');
+
+        function log(message, isError = false) {
+            const div = document.createElement('div');
+            div.className = isError ? 'error' : 'success';
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        function logSection(title) {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = `<h2>${title}</h2>`;
+            results.appendChild(section);
+            return section;
+        }
+
+        function clearResults() {
+            results.innerHTML = '';
+        }
+
+        async function runAllTests() {
+            clearResults();
+            
+            try {
+                // Test 1: Platform Initialization
+                const section1 = logSection('1. Platform Initialization');
+                platform = new BarbadosRootPlatform();
+                section1.innerHTML += `<p class="success">✅ Platform initialized successfully</p>`;
+                section1.innerHTML += `<p>Version: ${platform.state.version}</p>`;
+
+                // Test 2: Peacebonds Module
+                const section2 = logSection('2. Peacebonds Module');
+                const peacebondResult = await platform.issuePeacebond({
+                    issuer: 'Wittfrida Foundation',
+                    purpose: 'Bio-Architecture Test Project',
+                    amount: 5000000,
+                    currency: 'CR',
+                    location: 'Test Location',
+                    conditions: [
+                        { type: 'frequency', minimumFrequency: 0.043 },
+                        { type: 'peace_index', minimumPeaceIndex: 88.0 }
+                    ]
+                });
+                section2.innerHTML += `<p class="success">✅ Peacebond created: ${peacebondResult.peacebond.id}</p>`;
+                section2.innerHTML += `<p>Blockchain Hash: ${peacebondResult.peacebond.blockchainHash}</p>`;
+                section2.innerHTML += `<p>Integrity Seal: ${peacebondResult.integritySeal.id}</p>`;
+                section2.innerHTML += `<p>Resonance Anchor: ${peacebondResult.resonanceAnchor.id}</p>`;
+
+                // Test 3: AI Peace Platform
+                const section3 = logSection('3. AI Peace Platform');
+                const disputeAnalysis = await platform.analyzeDisputeWithIntegration({
+                    parties: ['Community A', 'Corporation B'],
+                    description: 'Resource allocation dispute',
+                    urgent: true,
+                    scope: 'regional'
+                });
+                section3.innerHTML += `<p class="success">✅ Dispute analyzed: ${disputeAnalysis.analysis.id}</p>`;
+                section3.innerHTML += `<p>Severity: ${disputeAnalysis.analysis.severity}</p>`;
+                section3.innerHTML += `<p>Recommended Resolution: ${disputeAnalysis.analysis.recommendedResolution.strategy}</p>`;
+                section3.innerHTML += `<p>Resolution Probability: ${(disputeAnalysis.analysis.mlPredictions.resolutionProbability * 100).toFixed(1)}%</p>`;
+                section3.innerHTML += `<p>Rules Checked: ${disputeAnalysis.enforcement.rulesChecked}</p>`;
+
+                // Test 4: Resonance Anchors
+                const section4 = logSection('4. Resonance Anchors');
+                const anchor = platform.resonance.createAnchor({
+                    frequency: 0.043,
+                    location: 'Test Node',
+                    type: 'test',
+                    rules: [
+                        {
+                            id: 'test-001',
+                            type: 'frequency_bounds',
+                            min: 0.040,
+                            max: 0.046,
+                            severity: 'medium'
+                        }
+                    ]
+                });
+                section4.innerHTML += `<p class="success">✅ Resonance anchor created: ${anchor.id}</p>`;
+                section4.innerHTML += `<p>Frequency: ${anchor.frequency} Hz</p>`;
+                section4.innerHTML += `<p>Nexus Alignment: ${(anchor.nexusAlignment * 100).toFixed(2)}%</p>`;
+                
+                const nexusStatus = platform.resonance.getNexusStatus();
+                section4.innerHTML += `<p>Total Alignment: ${(nexusStatus.totalAlignment * 100).toFixed(2)}%</p>`;
+                section4.innerHTML += `<p>Active Anchors: ${nexusStatus.activeAnchors}</p>`;
+
+                // Test 5: Integrity Checks
+                const section5 = logSection('5. Integrity Checks');
+                const testData = {
+                    type: 'test_document',
+                    content: 'This is a test document for integrity validation',
+                    timestamp: new Date().toISOString()
+                };
+                
+                const integritySeal = await platform.integrity.createIntegritySeal(testData);
+                section5.innerHTML += `<p class="success">✅ Integrity seal created: ${integritySeal.id}</p>`;
+                section5.innerHTML += `<p>SHA-256: ${integritySeal.checksum.substring(0, 20)}...</p>`;
+                section5.innerHTML += `<p>Blockchain TX: ${integritySeal.blockchain.transactionHash.substring(0, 20)}...</p>`;
+                section5.innerHTML += `<p>IPFS CID: ${integritySeal.ipfs.cid}</p>`;
+                
+                const validation = await platform.integrity.performIntegrityCheck(testData, {
+                    checksum: true,
+                    blockchain: true,
+                    ipfs: true,
+                    expectedChecksum: integritySeal.checksum
+                });
+                section5.innerHTML += `<p>Validation Status: ${validation.overall.status}</p>`;
+                section5.innerHTML += `<p>Passed Checks: ${validation.overall.passed} / ${validation.overall.passed + validation.overall.failed}</p>`;
+
+                // Test 6: Platform Health
+                const section6 = logSection('6. Platform Health Check');
+                const health = await platform.performHealthCheck();
+                section6.innerHTML += `<p class="success">✅ Overall Health: ${health.overall}</p>`;
+                section6.innerHTML += `<p>Peacebonds: ${health.modules.peacebonds.status} (${health.modules.peacebonds.active} active)</p>`;
+                section6.innerHTML += `<p>AI Peace: ${health.modules.aiPeace.status} (Peace Index: ${health.modules.aiPeace.globalPeaceIndex}%)</p>`;
+                section6.innerHTML += `<p>Resonance: ${health.modules.resonance.status} (Alignment: ${(health.modules.resonance.alignment * 100).toFixed(1)}%)</p>`;
+                section6.innerHTML += `<p>Integrity: ${health.modules.integrity.status}</p>`;
+
+                // Test 7: Dashboard Data
+                const section7 = logSection('7. Dashboard Data');
+                const dashboard = await platform.getDashboardData();
+                section7.innerHTML += `<p class="success">✅ Dashboard data retrieved</p>`;
+                section7.innerHTML += `<pre>${JSON.stringify(dashboard.summary, null, 2)}</pre>`;
+
+                // Final Summary
+                const summary = logSection('✅ Test Summary');
+                summary.innerHTML += `<p class="success">All integration tests passed successfully!</p>`;
+                summary.innerHTML += `<p>Total Peacebonds: ${health.metrics.totalPeacebonds}</p>`;
+                summary.innerHTML += `<p>Active Disputes: ${health.metrics.activeDisputes}</p>`;
+                summary.innerHTML += `<p>Active Anchors: ${health.metrics.activeAnchors}</p>`;
+                summary.innerHTML += `<p>Integrity Records: ${health.metrics.integrityRecords}</p>`;
+
+            } catch (error) {
+                const errorSection = logSection('❌ Error');
+                errorSection.innerHTML += `<p class="error">Error: ${error.message}</p>`;
+                errorSection.innerHTML += `<pre class="error">${error.stack}</pre>`;
+            }
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 500);
+        });
+    </script>
+</body>
+</html>

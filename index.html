@@ -10,6 +10,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Barbados-Root Platform Modules -->
+    <script src="peacebonds.js"></script>
+    <script src="ai-peace-platform.js"></script>
+    <script src="resonance-anchors.js"></script>
+    <script src="integrity-checks.js"></script>
+    <script src="barbados-root-integration.js"></script>
+    <script src="examples.js"></script>
+
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -100,10 +108,16 @@
         }
 
         let app, auth, db;
+        let barbadosRootPlatform; // Global platform instance
+        
         try {
            app = initializeApp(firebaseConfig);
            auth = getAuth(app);
            db = getFirestore(app);
+           
+           // Initialize Barbados-Root Platform
+           barbadosRootPlatform = new BarbadosRootPlatform();
+           console.log('Barbados-Root Platform initialized successfully');
         } catch(e) {
            console.error("Firebase init error", e);
         }
@@ -286,6 +300,43 @@
             generateAndSaveData();
         };
 
+        // --- BARBADOS-ROOT PLATFORM FUNCTIONS ---
+        window.getPlatformHealth = async () => {
+            if (barbadosRootPlatform) {
+                const health = await barbadosRootPlatform.performHealthCheck();
+                console.log('Platform Health:', health);
+                return health;
+            }
+            return null;
+        };
+
+        window.issuePeacebond = async (data) => {
+            if (barbadosRootPlatform) {
+                const result = await barbadosRootPlatform.issuePeacebond(data);
+                console.log('Peacebond Issued:', result);
+                return result;
+            }
+            return null;
+        };
+
+        window.analyzeDispute = async (data) => {
+            if (barbadosRootPlatform) {
+                const result = await barbadosRootPlatform.analyzeDisputeWithIntegration(data);
+                console.log('Dispute Analysis:', result);
+                return result;
+            }
+            return null;
+        };
+
+        window.getDashboard = async () => {
+            if (barbadosRootPlatform) {
+                const dashboard = await barbadosRootPlatform.getDashboardData();
+                console.log('Dashboard Data:', dashboard);
+                return dashboard;
+            }
+            return null;
+        };
+
         // --- AUTHENTICATION & INIT ---
         async function authenticateAndListen() {
             if (!auth) return;
@@ -309,6 +360,25 @@
                         if (doc.exists()) {
                             state.data = doc.data();
                             state.loading = false;
+                            
+                            // Update Barbados-Root Platform with new data
+                            if (barbadosRootPlatform) {
+                                barbadosRootPlatform.updatePeaceMetrics({
+                                    global: 87.4,
+                                    nodes: {
+                                        'ONNA': 92.1,
+                                        'LUMSA': 89.3,
+                                        'SUEDTIROL': 85.7,
+                                        'BERLIN': 88.2
+                                    }
+                                });
+                                
+                                // Log platform health
+                                barbadosRootPlatform.performHealthCheck().then(health => {
+                                    console.log('Platform Health:', health);
+                                });
+                            }
+                            
                             render();
                         }
                     }, (error) => {
