@@ -328,7 +328,7 @@ class EuystacioAI {
      * @returns {string} Decision ID
      */
     generateDecisionId() {
-        return `DEC-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `DEC-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     }
 }
 

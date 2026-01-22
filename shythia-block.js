@@ -12,6 +12,7 @@ class ShythiaBlock {
         this.config = {
             maxTransactionsPerBlock: config.maxTransactionsPerBlock || 1000,
             integrityCheckInterval: config.integrityCheckInterval || 5000,
+            maxEnforcementLogs: config.maxEnforcementLogs || 10000,
             sovereignNode: config.sovereignNode || 'BARBADOS-ROOT',
             ...config
         };
@@ -204,9 +205,9 @@ class ShythiaBlock {
         
         this.enforcementLogs.push(log);
         
-        // Keep only last 10000 logs
-        if (this.enforcementLogs.length > 10000) {
-            this.enforcementLogs = this.enforcementLogs.slice(-10000);
+        // Keep only last N logs as configured
+        if (this.enforcementLogs.length > this.config.maxEnforcementLogs) {
+            this.enforcementLogs = this.enforcementLogs.slice(-this.config.maxEnforcementLogs);
         }
     }
     
@@ -215,7 +216,7 @@ class ShythiaBlock {
      * @returns {string} Transaction ID
      */
     generateTransactionId() {
-        return `TX-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `TX-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     }
     
     /**
