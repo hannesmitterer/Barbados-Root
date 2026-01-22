@@ -5,6 +5,8 @@
   "main": "metadata-anchor.js",
   "scripts": {
     "test": "node metadata-anchor.test.js",
+    "test:integration": "node integration-test.js",
+    "test:all": "npm test && npm run test:integration",
     "validate": "node -e \"console.log('✅ Metadata Anchor module validated')\" && node metadata-anchor.test.js"
   },
   "repository": {
