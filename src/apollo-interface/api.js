@@ -30,7 +30,7 @@ class ApolloAPI {
             if (!data || !data.blockData) {
                 throw new Error('Missing block data');
             }
-            return this.apollo.blockchainConnector.addBlock(data.blockData);
+            return this.apollo.addBlock(data.blockData);
         });
 
         // AI endpoints

@@ -4,6 +4,7 @@
  */
 
 const crypto = require('crypto');
+const EC = require('elliptic').ec;
 
 class Transaction {
     constructor(fromAddress, toAddress, amount, timestamp = Date.now()) {
@@ -43,10 +44,22 @@ class Transaction {
             throw new Error('No signature in this transaction');
         }
 
-        const EC = require('elliptic').ec;
+        // Validate signature format before attempting verification to avoid unexpected errors
+        if (typeof this.signature !== 'string' ||
+            this.signature.length % 2 !== 0 ||
+            !/^[0-9a-fA-F]+$/.test(this.signature)) {
+            throw new Error('Invalid signature format');
+        }
+
         const ec = new EC('secp256k1');
         const key = ec.keyFromPublic(this.fromAddress, 'hex');
-        return key.verify(this.calculateHash(), this.signature);
+
+        try {
+            return key.verify(this.calculateHash(), this.signature);
+        } catch (err) {
+            // Normalize any low-level verification errors into a consistent validation error
+            throw new Error('Invalid signature format');
+        }
     }
 }
 

@@ -12,6 +12,11 @@ class ApolloInterface {
     }
 
     initialize(blockchainInstance, aiInstance) {
+        if (this.initialized) {
+            // Prevent duplicate initialization and endpoint registration
+            return;
+        }
+
         this.blockchainConnector = blockchainInstance;
         this.aiConnector = aiInstance;
         this.initialized = true;
@@ -79,6 +84,19 @@ class ApolloInterface {
         }
 
         return this.aiConnector.predict(modelName, data);
+    }
+
+    addBlock(blockData) {
+        if (!this.blockchainConnector) {
+            throw new Error('Blockchain connector not initialized');
+        }
+
+        this.blockchainConnector.addBlock(blockData);
+        return {
+            success: true,
+            blocks: this.blockchainConnector.getChain().length,
+            timestamp: Date.now()
+        };
     }
 
     getSystemStatus() {

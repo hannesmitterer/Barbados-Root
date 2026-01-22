@@ -29,7 +29,7 @@ class ShythiaBlock {
     }
 
     mineBlock(difficulty) {
-        while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join('0')) {
+        while (this.hash.substring(0, difficulty) !== '0'.repeat(difficulty)) {
             this.nonce++;
             this.hash = this.calculateHash();
         }

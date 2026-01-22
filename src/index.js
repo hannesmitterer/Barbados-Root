@@ -16,6 +16,7 @@ class BarbadosRoot {
             blockchainDifficulty: config.blockchainDifficulty || 2,
             clusterName: config.clusterName || 'Euystacio-Primary',
             apolloVersion: config.apolloVersion || '1.0.0',
+            verbose: config.verbose !== undefined ? config.verbose : true,
             ...config
         };
 
@@ -27,13 +28,19 @@ class BarbadosRoot {
         this.initialized = false;
     }
 
+    log(message) {
+        if (this.config.verbose) {
+            console.log(message);
+        }
+    }
+
     async initialize() {
-        console.log('Initializing Barbados-Root System...');
+        this.log('Initializing Barbados-Root System...');
 
         // Initialize Shythia Blockchain
         this.blockchain = new ShythiaBlockchain();
         this.blockchain.difficulty = this.config.blockchainDifficulty;
-        console.log('✓ Shythia Block initialized');
+        this.log('✓ Shythia Block initialized');
 
         // Initialize Euystacio AI
         this.aiEngine = new PredictionEngine();
@@ -42,7 +49,7 @@ class BarbadosRoot {
             nsr: true, 
             olf: true 
         });
-        console.log('✓ Euystacio-AI initialized');
+        this.log('✓ Euystacio-AI initialized');
 
         // Initialize Analyzer Cluster
         this.cluster = new AnalyzerCluster(this.config.clusterName);
@@ -50,24 +57,24 @@ class BarbadosRoot {
         this.cluster.createNode('compute-primary', 'compute');
         this.cluster.createNode('compute-secondary', 'compute');
         this.cluster.createNode('output-primary', 'output');
-        console.log('✓ Analyzer Cluster initialized');
+        this.log('✓ Analyzer Cluster initialized');
 
         // Initialize Apollo Interface
         this.apollo = new ApolloInterface();
         this.apollo.initialize(this.blockchain, this.aiEngine);
-        console.log('✓ Apollo Interface initialized');
+        this.log('✓ Apollo Interface initialized');
 
         // Initialize Apollo API
         this.api = new ApolloAPI(this.apollo);
-        console.log('✓ Apollo API initialized');
+        this.log('✓ Apollo API initialized');
 
         this.initialized = true;
-        console.log('✓ Barbados-Root System ready');
+        this.log('✓ Barbados-Root System ready');
 
         return this.getSystemStatus();
     }
 
-    async processTransaction(fromAddress, toAddress, amount) {
+    processTransaction(fromAddress, toAddress, amount) {
         if (!this.initialized) {
             throw new Error('System not initialized. Call initialize() first.');
         }
@@ -140,20 +147,20 @@ class BarbadosRoot {
             await this.initialize();
         }
 
-        console.log(`\nRunning ${iterations} transaction simulations...`);
+        this.log(`\nRunning ${iterations} transaction simulations...`);
         const results = [];
 
         for (let i = 0; i < iterations; i++) {
-            const result = await this.processTransaction(
+            const result = this.processTransaction(
                 `address-${i}`,
                 `address-${i + 1}`,
                 (i + 1) * 100
             );
             results.push(result);
-            console.log(`  Transaction ${i + 1}/${iterations} processed`);
+            this.log(`  Transaction ${i + 1}/${iterations} processed`);
         }
 
-        console.log('✓ Simulation complete');
+        this.log('✓ Simulation complete');
 
         return {
             totalTransactions: iterations,

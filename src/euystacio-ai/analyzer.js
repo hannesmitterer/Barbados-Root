@@ -53,11 +53,45 @@ class AnalyzerNode {
             return { error: 'Invalid input data' };
         }
 
-        // Simulate AI metrics computation
+        // Derive simple metrics from input data to avoid static, misleading values
+        const numericValues = Object.values(data).filter(
+            (v) => typeof v === 'number' && Number.isFinite(v)
+        );
+
+        let nsr_drift;
+        let olf_score;
+        let resonance_freq;
+
+        if (numericValues.length > 0) {
+            const count = numericValues.length;
+            const sum = numericValues.reduce((acc, v) => acc + v, 0);
+            const mean = sum / count;
+
+            const variance =
+                numericValues.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) /
+                count;
+            const stdDev = Math.sqrt(variance);
+
+            // Normalize metrics into reasonable ranges and round to 3 decimals
+            nsr_drift = Number(Math.tanh(Math.abs(mean)).toFixed(3));
+            olf_score = Number((1 / (1 + Math.exp(-stdDev))).toFixed(3));
+            resonance_freq = Number(
+                (Math.tanh(variance / (1 + Math.abs(mean))) * 0.5 + 0.5).toFixed(3)
+            );
+        } else {
+            // Fallback: base metrics on serialized length for non-numeric data
+            const serialized = JSON.stringify(data);
+            const len = serialized.length || 1;
+
+            nsr_drift = Number(((len % 100) / 100).toFixed(3));
+            olf_score = Number((((len * 7) % 100) / 100).toFixed(3));
+            resonance_freq = Number((((len * 13) % 100) / 100).toFixed(3));
+        }
+
         return {
-            nsr_drift: 0.000,
-            olf_score: 0.870,
-            resonance_freq: 0.043,
+            nsr_drift,
+            olf_score,
+            resonance_freq,
             timestamp: Date.now()
         };
     }
@@ -115,19 +149,20 @@ class AnalyzerCluster {
     process(inputData) {
         const results = [];
 
-        // Input phase
+        // Pipeline: input -> compute chain -> output
         for (const inputNode of this.inputNodes) {
-            const processed = inputNode.processInput(inputData);
-            
-            // Compute phase
+            // Input phase
+            let currentData = inputNode.processInput(inputData);
+
+            // Compute phase: pass data through each compute node sequentially
             for (const computeNode of this.computeNodes) {
-                const computed = computeNode.processInput(processed);
-                
-                // Output phase
-                for (const outputNode of this.outputNodes) {
-                    const output = outputNode.processInput(computed);
-                    results.push(output);
-                }
+                currentData = computeNode.processInput(currentData);
+            }
+
+            // Output phase: each output node consumes the fully computed data
+            for (const outputNode of this.outputNodes) {
+                const output = outputNode.processInput(currentData);
+                results.push(output);
             }
         }
 
