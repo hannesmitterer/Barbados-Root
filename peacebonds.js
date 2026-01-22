@@ -44,7 +44,7 @@ class PeacebondManager {
      * @returns {string} Unique identifier
      */
     generateId() {
-        return `PB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `PB-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     }
 
     /**

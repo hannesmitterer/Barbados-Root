@@ -53,7 +53,7 @@ class ResonanceAnchors {
      * @returns {string} Anchor ID
      */
     generateAnchorId() {
-        return `RA-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `RA-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     }
 
     /**

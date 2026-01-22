@@ -51,7 +51,7 @@ class AIPeacePlatform {
      * @returns {string} Dispute ID
      */
     generateDisputeId() {
-        return `DSP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `DSP-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     }
 
     /**
