@@ -152,8 +152,9 @@ jobs:
           COMMIT_SHA="${{ github.sha }}"
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           
-          # Mock IPFS CID generation (in production, use actual IPFS pinning service)
-          MOCK_CID="Qm$(openssl rand -hex 22 | base58)"
+          # Generate mock IPFS CID (simplified - in production use actual IPFS)
+          # CIDv0 format: Qm + 44 base58 characters
+          MOCK_CID="Qm$(echo -n "$COMMIT_SHA$TIMESTAMP" | sha256sum | cut -c1-44)"
           
           cat > ipfs-pin-record.json << EOF
           {

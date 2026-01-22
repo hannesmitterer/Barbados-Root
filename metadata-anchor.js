@@ -76,17 +76,19 @@ class MetadataAnchor {
         
         // Basic CID validation (CIDv0 and CIDv1)
         // CIDv0: Qm followed by 44 base58 characters (total 46)
-        const cidv0Pattern = /^Qm[1-9A-HJ-NP-Za-km-z]{44,}$/;
-        // CIDv1: Various patterns including base32
-        const cidv1Pattern = /^[a-z2-7]{59,}$/;
+        // Base58 charset: 123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz
+        const cidv0Pattern = /^Qm[1-9A-HJ-NP-Za-km-z]{44}$/;
+        
+        // CIDv1: Various patterns including base32 (multibase prefix 'b')
         const cidv1Base32Pattern = /^b[a-z2-7]{58,}$/i;
-        // Also accept custom/extended CIDs that start with Qm
-        const customCIDPattern = /^Qm[A-Za-z0-9]{20,}$/;
+        
+        // For this implementation, also accept custom extended CIDs
+        // that follow Qm prefix but may be longer (for test/demo purposes)
+        const extendedCIDPattern = /^Qm[1-9A-HJ-NP-Za-km-z][A-Za-z0-9]{20,}$/;
         
         return cidv0Pattern.test(cid) || 
-               cidv1Pattern.test(cid) || 
                cidv1Base32Pattern.test(cid) ||
-               customCIDPattern.test(cid);
+               extendedCIDPattern.test(cid);
     }
 
     /**
@@ -191,13 +193,23 @@ class MetadataAnchor {
         const blockchainAnchors = this.anchors.filter(a => a.type === 'blockchain').length;
         const validatedIPFS = this.anchors.filter(a => a.type === 'ipfs' && a.validated).length;
 
+        // Calculate integrity score (avoid division by zero)
+        let integrityScore = 0;
+        if (ipfsAnchors > 0) {
+            integrityScore = (validatedIPFS / ipfsAnchors * 100).toFixed(2);
+        } else if (totalAnchors === 0) {
+            integrityScore = 0;
+        } else {
+            integrityScore = 100; // No IPFS anchors but other anchors exist
+        }
+
         return {
             totalAnchors,
             ipfsAnchors,
             blockchainAnchors,
             validatedIPFS,
             metadataRecords: Object.keys(this.metadata).length,
-            integrityScore: totalAnchors > 0 ? (validatedIPFS / ipfsAnchors * 100).toFixed(2) : 0,
+            integrityScore: integrityScore.toString(),
             timestamp: new Date().toISOString()
         };
     }
