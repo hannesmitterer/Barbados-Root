@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbados Root - Integration Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --resonance-emerald: #10b981;
+            --stone: #1C1C1C;
+            --gold: #C5A059;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--resonance-emerald);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-optimal {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .status-stable {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .pulse-slow {
+            animation: pulse 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold mb-2" style="color: var(--gold);">
+                BARBADOS ROOT INTEGRATION
+            </h1>
+            <p class="text-xl text-gray-400">
+                Shythia Block · Euystacio-AI · Apollo Interface
+            </p>
+            <div id="system-status" class="mt-4">
+                <span class="status-badge status-optimal">INITIALIZING...</span>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- AI-Blockchain Sync -->
+            <div class="card glow">
+                <h3 class="text-sm uppercase text-gray-400 mb-2">AI-Blockchain Sync</h3>
+                <div id="sync-value" class="metric-value">--</div>
+                <div id="sync-status" class="text-xs text-gray-500 mt-1">Calculating...</div>
+            </div>
+
+            <!-- Sovereignty Alignment -->
+            <div class="card glow">
+                <h3 class="text-sm uppercase text-gray-400 mb-2">Sovereignty Alignment</h3>
+                <div id="sovereignty-value" class="metric-value">--</div>
+                <div id="sovereignty-status" class="text-xs text-gray-500 mt-1">Calculating...</div>
+            </div>
+
+            <!-- Blockchain Integrity -->
+            <div class="card glow">
+                <h3 class="text-sm uppercase text-gray-400 mb-2">Blockchain Integrity</h3>
+                <div id="blockchain-value" class="metric-value">--</div>
+                <div id="blockchain-tx" class="text-xs text-gray-500 mt-1">Transactions: 0</div>
+            </div>
+
+            <!-- AI Autonomy -->
+            <div class="card glow">
+                <h3 class="text-sm uppercase text-gray-400 mb-2">AI Autonomy Score</h3>
+                <div id="ai-value" class="metric-value">--</div>
+                <div id="ai-decisions" class="text-xs text-gray-500 mt-1">Decisions: 0</div>
+            </div>
+        </div>
+
+        <!-- Module Status Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Shythia Block -->
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-emerald-400">🔗 Shythia Block</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Total Blocks:</span>
+                        <span id="shythia-blocks" class="font-mono">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Transactions:</span>
+                        <span id="shythia-tx" class="font-mono">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Integrity Score:</span>
+                        <span id="shythia-integrity" class="font-mono">100%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Pending TX:</span>
+                        <span id="shythia-pending" class="font-mono">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Euystacio-AI -->
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-emerald-400">🧠 Euystacio-AI</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Autonomy Score:</span>
+                        <span id="euystacio-autonomy" class="font-mono">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Ethical Alignment:</span>
+                        <span id="euystacio-ethical" class="font-mono">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Active Decisions:</span>
+                        <span id="euystacio-active" class="font-mono">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Lex Amoris:</span>
+                        <span id="euystacio-lex" class="status-badge status-optimal">ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Apollo Interface -->
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-emerald-400">🎯 Apollo Interface</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Node Consensus:</span>
+                        <span id="apollo-consensus" class="font-mono">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">System Integrity:</span>
+                        <span id="apollo-integrity" class="font-mono">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Active Nodes:</span>
+                        <span id="apollo-nodes" class="font-mono">5/5</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Last Update:</span>
+                        <span id="apollo-update" class="font-mono text-xs">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Simulator -->
+        <div class="card mb-8">
+            <h3 class="text-xl font-bold mb-4">Transaction Simulator</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">From:</label>
+                    <input id="tx-from" type="text" value="Alice" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">To:</label>
+                    <input id="tx-to" type="text" value="Bob" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Amount:</label>
+                    <input id="tx-amount" type="number" value="100" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white">
+                </div>
+                <div class="flex items-end">
+                    <button id="btn-process" class="w-full px-6 py-2 bg-emerald-600 hover:bg-emerald-700 rounded font-bold transition">
+                        Process Transaction
+                    </button>
+                </div>
+            </div>
+            <div id="tx-result" class="mt-4 p-4 bg-slate-800 rounded hidden"></div>
+        </div>
+
+        <!-- System Log -->
+        <div class="card">
+            <h3 class="text-xl font-bold mb-4">System Log</h3>
+            <div id="system-log" class="bg-black/50 p-4 rounded font-mono text-xs space-y-1 max-h-64 overflow-y-auto">
+                <div class="text-gray-500">System initializing...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Modules -->
+    <script src="shythia-block.js"></script>
+    <script src="euystacio-ai.js"></script>
+    <script src="apollo-interface.js"></script>
+    <script src="barbados-integration.js"></script>
+
+    <!-- Main Application -->
+    <script>
+        // Initialize the integrated system
+        let system;
+        let updateInterval;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('system-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'text-red-400' : 
+                         type === 'success' ? 'text-emerald-400' : 
+                         type === 'warning' ? 'text-yellow-400' : 'text-gray-400';
+            const entry = document.createElement('div');
+            entry.className = color;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateDashboard() {
+            const status = system.getSystemStatus();
+            const dashboard = status.dashboard;
+            
+            // Update main metrics
+            document.getElementById('sync-value').textContent = 
+                (dashboard.alignment.aiBlockchainSync * 100).toFixed(1) + '%';
+            document.getElementById('sovereignty-value').textContent = 
+                (dashboard.alignment.sovereigntyAlignment * 100).toFixed(1) + '%';
+            document.getElementById('blockchain-value').textContent = 
+                dashboard.blockchain.integrityScore.toFixed(1) + '%';
+            document.getElementById('ai-value').textContent = 
+                (dashboard.ai.autonomyScore * 100).toFixed(1) + '%';
+            
+            // Update blockchain stats
+            document.getElementById('blockchain-tx').textContent = 
+                `Transactions: ${dashboard.blockchain.totalTransactions}`;
+            document.getElementById('ai-decisions').textContent = 
+                `Decisions: ${dashboard.ai.decisionCount}`;
+            
+            // Update Shythia Block
+            document.getElementById('shythia-blocks').textContent = dashboard.blockchain.blocksCreated;
+            document.getElementById('shythia-tx').textContent = dashboard.blockchain.totalTransactions;
+            document.getElementById('shythia-integrity').textContent = 
+                dashboard.blockchain.integrityScore.toFixed(2) + '%';
+            document.getElementById('shythia-pending').textContent = dashboard.blockchain.pendingTransactions;
+            
+            // Update Euystacio-AI
+            document.getElementById('euystacio-autonomy').textContent = 
+                (dashboard.ai.autonomyScore * 100).toFixed(1) + '%';
+            document.getElementById('euystacio-ethical').textContent = 
+                (dashboard.ai.intelligence.ethicalAlignment * 100).toFixed(1) + '%';
+            document.getElementById('euystacio-active').textContent = dashboard.ai.activeDecisions;
+            
+            // Update Apollo Interface
+            document.getElementById('apollo-consensus').textContent = 
+                (dashboard.alignment.nodeConsensus * 100).toFixed(1) + '%';
+            document.getElementById('apollo-integrity').textContent = 
+                (dashboard.alignment.systemIntegrity * 100).toFixed(1) + '%';
+            document.getElementById('apollo-update').textContent = 
+                new Date().toLocaleTimeString();
+            
+            // Update system status
+            const healthStatus = status.systemHealth.status;
+            const statusBadge = document.getElementById('system-status');
+            statusBadge.innerHTML = `<span class="status-badge ${
+                healthStatus === 'OPTIMAL' ? 'status-optimal' : 'status-stable'
+            }">${healthStatus}</span>`;
+        }
+
+        function processTransaction() {
+            const from = document.getElementById('tx-from').value;
+            const to = document.getElementById('tx-to').value;
+            const amount = parseFloat(document.getElementById('tx-amount').value);
+            
+            log(`Processing transaction: ${from} → ${to} (${amount})`, 'info');
+            
+            const result = system.processTransaction({
+                from,
+                to,
+                amount,
+                transparent: true,
+                harm: 0,
+                beneficiaries: [from, to]
+            });
+            
+            const resultDiv = document.getElementById('tx-result');
+            resultDiv.classList.remove('hidden');
+            
+            if (result.success) {
+                resultDiv.innerHTML = `
+                    <div class="text-emerald-400 font-bold mb-2">✓ Transaction Successful</div>
+                    <div class="text-sm space-y-1">
+                        <div>Transaction ID: <span class="text-gray-300">${result.transactionId}</span></div>
+                        <div>AI Decision ID: <span class="text-gray-300">${result.aiDecisionId}</span></div>
+                        <div>AI Recommendation: <span class="text-gray-300">${result.dashboard.ai.intelligence.realTimeScore > 0.7 ? 'APPROVED' : 'REVIEW'}</span></div>
+                    </div>
+                `;
+                log(`Transaction ${result.transactionId} completed successfully`, 'success');
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="text-red-400 font-bold mb-2">✗ Transaction Failed</div>
+                    <div class="text-sm">
+                        <div>Stage: <span class="text-gray-300">${result.stage}</span></div>
+                        <div>Reason: <span class="text-gray-300">${result.reason}</span></div>
+                    </div>
+                `;
+                log(`Transaction failed: ${result.reason}`, 'error');
+            }
+            
+            updateDashboard();
+        }
+
+        // Initialize system on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Initializing Barbados Root Integration...', 'info');
+            
+            system = new BarbadosRootIntegration({
+                sovereignNode: 'BARBADOS-ROOT'
+            });
+            
+            log('✓ Shythia Block initialized', 'success');
+            log('✓ Euystacio-AI initialized', 'success');
+            log('✓ Apollo Interface initialized', 'success');
+            log('System operational', 'success');
+            
+            // Initial dashboard update
+            updateDashboard();
+            
+            // Set up periodic updates
+            updateInterval = setInterval(updateDashboard, 2000);
+            
+            // Attach event listener
+            document.getElementById('btn-process').addEventListener('click', processTransaction);
+        });
+    </script>
+</body>
+</html>
