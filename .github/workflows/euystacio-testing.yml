@@ -17,6 +17,9 @@ jobs:
   test-ai-cluster:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+    
     strategy:
       matrix:
         node-version: [18.x, 20.x]
