@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbados Root System - Integration Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --stone: #1C1C1C;
+            --gold: #C5A059;
+            --ocean: #0077B6;
+            --leaf: #00B894;
+            --ethos: #D2B48C;
+        }
+        body {
+            background-color: var(--stone);
+            color: var(--ethos);
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        .status-ok { color: var(--leaf); }
+        .status-warn { color: var(--gold); }
+        .status-error { color: #EF4444; }
+        .code-block {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+        .metric-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s;
+        }
+        .metric-card:hover {
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.2);
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="mb-10 pb-6 border-b border-[#C5A059]">
+            <h1 class="text-4xl font-bold text-[#C5A059] mb-2">Barbados Root System</h1>
+            <p class="text-lg text-[#D2B48C] opacity-90">Critical Features Integration Demo</p>
+            <p class="text-sm text-[#D2B48C] opacity-60 mt-2">
+                Euystacio Lock • NSR Binary Logic • VB_BRIDGE • Resonance Enforcement
+            </p>
+        </header>
+
+        <!-- Control Panel -->
+        <div class="mb-8 bg-white/5 border border-[#0077B6] rounded-xl p-6">
+            <h2 class="text-2xl font-bold text-[#0077B6] mb-4">System Control</h2>
+            <div class="flex gap-4">
+                <button onclick="initializeSystem()" 
+                    class="px-6 py-3 bg-[#C5A059] text-black font-bold rounded hover:bg-[#D4AF37] transition">
+                    Initialize System
+                </button>
+                <button onclick="runHealthCheck()" 
+                    class="px-6 py-3 bg-[#00B894] text-black font-bold rounded hover:bg-[#00D4A0] transition">
+                    Health Check
+                </button>
+                <button onclick="runTests()" 
+                    class="px-6 py-3 bg-[#0077B6] text-white font-bold rounded hover:bg-[#0088CC] transition">
+                    Run Tests
+                </button>
+            </div>
+            <div id="status-message" class="mt-4 text-sm"></div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- System Status -->
+            <div class="metric-card">
+                <h3 class="text-sm uppercase opacity-60 mb-2">System Status</h3>
+                <p id="system-status" class="text-3xl font-bold">--</p>
+                <p id="system-integrity" class="text-xs mt-2 opacity-60">Integrity: --</p>
+            </div>
+
+            <!-- Euystacio Lock -->
+            <div class="metric-card">
+                <h3 class="text-sm uppercase opacity-60 mb-2">Euystacio Lock</h3>
+                <p id="lock-status" class="text-3xl font-bold">--</p>
+                <p id="lock-pressure" class="text-xs mt-2 opacity-60">Pressure: --</p>
+            </div>
+
+            <!-- NSR Logic -->
+            <div class="metric-card">
+                <h3 class="text-sm uppercase opacity-60 mb-2">NSR Drift</h3>
+                <p id="nsr-drift" class="text-3xl font-bold">--</p>
+                <p id="nsr-integrity" class="text-xs mt-2 opacity-60">Integrity: --</p>
+            </div>
+
+            <!-- VB_BRIDGE -->
+            <div class="metric-card">
+                <h3 class="text-sm uppercase opacity-60 mb-2">VB_BRIDGE</h3>
+                <p id="bridge-status" class="text-3xl font-bold">--</p>
+                <p id="bridge-nodes" class="text-xs mt-2 opacity-60">Nodes: --</p>
+            </div>
+        </div>
+
+        <!-- Component Details -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Machine-Level Offsets -->
+            <div class="bg-white/5 border border-[#D2B48C] rounded-xl p-6">
+                <h3 class="text-xl font-bold text-[#D2B48C] mb-4">Machine-Level Offsets</h3>
+                <div class="space-y-3">
+                    <div class="code-block">
+                        <span class="text-[#C5A059]">[OFFSET 0100]</span> Pressure fallback & lock engage
+                    </div>
+                    <div class="code-block">
+                        <span class="text-[#C5A059]">[OFFSET 0110]</span> Autonomous resonance parameters
+                    </div>
+                    <div class="code-block">
+                        <span class="text-[#C5A059]">[OFFSET 0120]</span> NSR binary enforcement rules
+                    </div>
+                    <div class="code-block">
+                        <span class="text-[#C5A059]">[OFFSET 0130]</span> VB_BRIDGE synchronization
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resonance Parameters -->
+            <div class="bg-white/5 border border-[#D2B48C] rounded-xl p-6">
+                <h3 class="text-xl font-bold text-[#D2B48C] mb-4">Resonance Parameters</h3>
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-xs opacity-60">Base Frequency</p>
+                        <p class="text-2xl font-bold text-[#00B894]">0.043 Hz</p>
+                    </div>
+                    <div>
+                        <p class="text-xs opacity-60">Harmonic Frequency</p>
+                        <p class="text-2xl font-bold text-[#00B894]">432 Hz</p>
+                    </div>
+                    <div>
+                        <p class="text-xs opacity-60">Total Nodes</p>
+                        <p class="text-2xl font-bold text-[#00B894]">144,000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Output -->
+        <div class="bg-white/5 border border-[#0077B6] rounded-xl p-6">
+            <h3 class="text-xl font-bold text-[#0077B6] mb-4">System Console</h3>
+            <div id="console" class="code-block text-[#00B894] h-64 overflow-y-auto">
+                <p>System ready. Click "Initialize System" to begin.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-10 pt-6 border-t border-[#333] text-center text-sm opacity-50">
+            <p>Barbados Root System v1.0.0 • NSR Enforced • Law of Equals • MIT License</p>
+        </footer>
+    </div>
+
+    <!-- Load all modules -->
+    <script src="euystacio_lock.js"></script>
+    <script src="nsr_binary_logic.js"></script>
+    <script src="vb_bridge.js"></script>
+    <script src="resonance_enforcement.js"></script>
+    <script src="ipfs_validator.js"></script>
+    <script src="blockchain_verifier.js"></script>
+    <script src="crypto_integrity.js"></script>
+    <script src="barbados_root_system.js"></script>
+    <script src="test_suite.js"></script>
+
+    <script>
+        let system = null;
+
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#EF4444' : type === 'success' ? '#00B894' : '#D2B48C';
+            console.innerHTML += `<p style="color: ${color}">[${timestamp}] ${message}</p>`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function setStatus(message, isError = false) {
+            const statusEl = document.getElementById('status-message');
+            statusEl.textContent = message;
+            statusEl.className = isError ? 'mt-4 text-sm status-error' : 'mt-4 text-sm status-ok';
+        }
+
+        async function initializeSystem() {
+            try {
+                log('Initializing Barbados Root System...', 'info');
+                setStatus('Initializing system...');
+                
+                system = new BarbadosRootSystem();
+                const result = await system.initialize();
+                
+                if (result.success) {
+                    log('✓ System initialized successfully', 'success');
+                    setStatus('System initialized successfully');
+                    await updateDashboard();
+                } else {
+                    log('✗ System initialization failed: ' + result.error, 'error');
+                    setStatus('Initialization failed', true);
+                }
+            } catch (error) {
+                log('✗ Error: ' + error.message, 'error');
+                setStatus('Error: ' + error.message, true);
+            }
+        }
+
+        async function runHealthCheck() {
+            if (!system || !system.state.initialized) {
+                setStatus('Please initialize system first', true);
+                return;
+            }
+
+            try {
+                log('Running health check...', 'info');
+                setStatus('Running health check...');
+                
+                const health = await system.performHealthCheck();
+                
+                log('✓ Health check complete', 'success');
+                log(`  Overall: ${health.overall}`, 'info');
+                log(`  System Integrity: ${health.systemIntegrity.toFixed(2)}%`, 'info');
+                
+                setStatus(`Health: ${health.overall} - Integrity: ${health.systemIntegrity.toFixed(1)}%`);
+                await updateDashboard();
+            } catch (error) {
+                log('✗ Error: ' + error.message, 'error');
+                setStatus('Error: ' + error.message, true);
+            }
+        }
+
+        async function runTests() {
+            try {
+                log('Running test suite...', 'info');
+                setStatus('Running tests...');
+                
+                const success = await TestRunner.run();
+                
+                if (success) {
+                    log('✓ All tests passed', 'success');
+                    setStatus('All tests passed');
+                } else {
+                    log('✗ Some tests failed - check console', 'error');
+                    setStatus('Some tests failed', true);
+                }
+            } catch (error) {
+                log('✗ Error: ' + error.message, 'error');
+                setStatus('Error: ' + error.message, true);
+            }
+        }
+
+        async function updateDashboard() {
+            if (!system || !system.state.initialized) {
+                return;
+            }
+
+            try {
+                const dashboard = await system.getDashboard();
+                
+                // System Status
+                document.getElementById('system-status').textContent = dashboard.system.health;
+                document.getElementById('system-status').className = 
+                    'text-3xl font-bold ' + (dashboard.system.health === 'HEALTHY' ? 'status-ok' : 'status-warn');
+                document.getElementById('system-integrity').textContent = 
+                    `Integrity: ${dashboard.system.integrity.toFixed(1)}%`;
+                
+                // Euystacio Lock
+                document.getElementById('lock-status').textContent = 
+                    dashboard.euystacioLock.locked ? 'LOCKED' : 'UNLOCKED';
+                document.getElementById('lock-status').className = 
+                    'text-3xl font-bold ' + (dashboard.euystacioLock.locked ? 'status-ok' : 'status-warn');
+                document.getElementById('lock-pressure').textContent = 
+                    `Pressure: ${dashboard.euystacioLock.pressure.toFixed(1)} MMcf/g`;
+                
+                // NSR
+                document.getElementById('nsr-drift').textContent = 
+                    dashboard.nsr.drift.toFixed(3) + '%';
+                document.getElementById('nsr-drift').className = 
+                    'text-3xl font-bold ' + (dashboard.nsr.drift === 0 ? 'status-ok' : 'status-warn');
+                document.getElementById('nsr-integrity').textContent = 
+                    `Integrity: ${dashboard.nsr.integrity.toFixed(1)}%`;
+                
+                // VB_BRIDGE
+                document.getElementById('bridge-status').textContent = 
+                    dashboard.vbBridge.synchronized ? 'SYNCED' : 'DEGRADED';
+                document.getElementById('bridge-status').className = 
+                    'text-3xl font-bold ' + (dashboard.vbBridge.synchronized ? 'status-ok' : 'status-error');
+                document.getElementById('bridge-nodes').textContent = 
+                    `Nodes: ${dashboard.vbBridge.activeNodes.toLocaleString()}`;
+                
+            } catch (error) {
+                log('✗ Dashboard update error: ' + error.message, 'error');
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            log('Barbados Root System Demo loaded', 'success');
+            log('Ready for initialization', 'info');
+        });
+    </script>
+</body>
+</html>
