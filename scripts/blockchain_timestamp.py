@@ -33,25 +33,31 @@ class BlockchainTimestamp:
     def create_merkle_root(self, data_hash):
         """
         Create Merkle root from hash
-        Simulates blockchain anchoring process
+        NOTE: This simulates blockchain anchoring process.
+        In production, this would interact with actual blockchain API
+        (e.g., web3.py for Ethereum or similar library).
         """
-        # In production, this would interact with actual blockchain API
         merkle_data = f"{data_hash}:{self.timestamp.isoformat()}"
         merkle_root = hashlib.sha256(merkle_data.encode()).hexdigest()
         return merkle_root
     
     def generate_blockchain_metadata(self):
-        """Generate blockchain-ready metadata"""
+        """
+        Generate blockchain-ready metadata
+        NOTE: Transaction IDs and block data are simulated for demonstration.
+        Production implementation would use actual blockchain network.
+        """
         file_hash = self.calculate_sha256()
         merkle_root = self.create_merkle_root(file_hash)
         
-        # Simulate blockchain transaction
+        # Simulate blockchain transaction (format is demonstration only)
         blockchain_tx = {
-            'tx_id': f"0xHM{merkle_root[:40]}",
-            'block_height': 'SIMULATED',  # In production: actual block number
-            'network': 'Ethereum/IPFS Hybrid',
+            'tx_id': f"SIMULATED_0x{merkle_root[:40]}",  # Demo format
+            'block_height': 'SIMULATED',
+            'network': 'Ethereum/IPFS Hybrid (Demo)',
             'timestamp': self.timestamp.isoformat() + 'Z',
-            'confirmations': 'PENDING',  # In production: actual confirmations
+            'confirmations': 'PENDING',
+            'note': 'This is a simulated transaction for demonstration purposes'
         }
         
         return {
@@ -78,8 +84,9 @@ class BlockchainTimestamp:
             'proof_hash': proof_hash,
             'timestamp': self.timestamp.isoformat() + 'Z',
             'blockchain_data': metadata,
-            'verification_url': f"https://etherscan.io/tx/{metadata['blockchain_transaction']['tx_id']}",
-            'ipfs_anchor': f"ipfs://Qm{metadata['file_hash'][:44]}"
+            'verification_note': 'Simulated blockchain integration for demonstration',
+            'ipfs_anchor': f"ipfs://Qm{metadata['file_hash'][:44]}",
+            'production_note': 'In production, use actual blockchain explorer URL'
         }
         
         return timestamp_proof
@@ -104,9 +111,9 @@ class BlockchainTimestamp:
         print(f"  - Author: {proof['blockchain_data']['proof_of_ownership']['author']}")
         print(f"  - Signature: {proof['blockchain_data']['proof_of_ownership']['signature']}")
         print(f"  - Origin: {proof['blockchain_data']['proof_of_ownership']['geographic_origin']}")
-        print(f"\n🌐 Verification:")
-        print(f"  - URL: {proof['verification_url']}")
+        print(f"\n🌐 Anchoring:")
         print(f"  - IPFS: {proof['ipfs_anchor']}")
+        print(f"  - Note: {proof['verification_note']}")
         print("=" * 60)
 
 def main():

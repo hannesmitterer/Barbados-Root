@@ -14,6 +14,20 @@ from datetime import datetime
 class IPFSValidator:
     """Validator for binary header integrity and IPFS deployment"""
     
+    # Binary structure offsets (in bytes)
+    OFFSET_IDENTITY_START = 0
+    OFFSET_IDENTITY_ANCHOR = 0
+    OFFSET_IDENTITY_TIMESTAMP = 9
+    OFFSET_IDENTITY_GEO = 18
+    
+    OFFSET_NSR_START = 256
+    OFFSET_NSR_ACTIVE = 256
+    OFFSET_NSR_FREQUENCY = 265
+    OFFSET_NSR_PRIMARY_KEY = 280
+    
+    OFFSET_VB_START = 1280
+    OFFSET_VB_BRIDGE = 1280
+    
     def __init__(self, binary_path):
         self.binary_path = binary_path
         self.metadata = {}
@@ -36,19 +50,19 @@ class IPFSValidator:
             with open(self.binary_path, 'rb') as f:
                 data = f.read()
                 
-            # Extract Identity Metadata (OFFSET 0000)
-            anchor = data[0:9].decode('utf-8', errors='ignore')
-            timestamp = data[9:19].decode('utf-8', errors='ignore')
-            geo_lock = data[18:30].decode('utf-8', errors='ignore')
+            # Extract Identity Metadata using defined offsets
+            anchor = data[self.OFFSET_IDENTITY_ANCHOR:self.OFFSET_IDENTITY_ANCHOR+9].decode('utf-8', errors='ignore')
+            timestamp = data[self.OFFSET_IDENTITY_TIMESTAMP:self.OFFSET_IDENTITY_TIMESTAMP+10].decode('utf-8', errors='ignore')
+            geo_lock = data[self.OFFSET_IDENTITY_GEO:self.OFFSET_IDENTITY_GEO+12].decode('utf-8', errors='ignore')
             
-            # Extract NSR Metadata (OFFSET 0100)
-            # NSR_ACTIVE is at offset 256, but byte 265 overlaps with frequency lock
-            nsr_active = data[256:265].decode('utf-8', errors='ignore')  # 9 bytes readable
-            frequency_lock = data[265:274]
-            primary_key = data[280:289].decode('utf-8', errors='ignore')
+            # Extract NSR Metadata using defined offsets
+            # NSR_ACTIVE is 9 bytes readable (10th byte overlaps with frequency lock)
+            nsr_active = data[self.OFFSET_NSR_ACTIVE:self.OFFSET_NSR_FREQUENCY].decode('utf-8', errors='ignore')
+            frequency_lock = data[self.OFFSET_NSR_FREQUENCY:self.OFFSET_NSR_FREQUENCY+9]
+            primary_key = data[self.OFFSET_NSR_PRIMARY_KEY:self.OFFSET_NSR_PRIMARY_KEY+9].decode('utf-8', errors='ignore')
             
-            # Extract VB Bridge (OFFSET 0500)
-            vb_bridge = data[1280:1289].decode('utf-8', errors='ignore')
+            # Extract VB Bridge using defined offsets
+            vb_bridge = data[self.OFFSET_VB_BRIDGE:self.OFFSET_VB_BRIDGE+9].decode('utf-8', errors='ignore')
             
             self.metadata = {
                 'anchor_signature': anchor,
@@ -90,9 +104,12 @@ class IPFSValidator:
     def generate_ipfs_hash_simulation(self, sha256_hash):
         """
         Simulate IPFS CID generation (QmHash format)
-        In production, this would call actual IPFS node API
+        NOTE: This is a simulation for demonstration purposes.
+        In production, this would call actual IPFS node API (ipfs.add())
+        which performs proper base58 multihash encoding.
+        For now, we create a simplified CID-like identifier.
         """
-        # Simulated CID based on SHA-256 (prefix Qm for IPFS v0)
+        # Simulated CID based on SHA-256 (prefix Qm for IPFS v0 simulation)
         ipfs_cid = f"Qm{sha256_hash[:44]}"
         return ipfs_cid
     

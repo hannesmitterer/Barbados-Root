@@ -97,7 +97,16 @@ if [ "$all_files_exist" = true ]; then
     echo "  - $HEARTBEAT_SYNC"
     echo ""
     echo "Binary Header: $BINARY_FILE"
-    echo "SHA-256 Hash: $(sha256sum $BINARY_FILE | awk '{print $1}')"
+    
+    # Cross-platform hash calculation
+    if command -v sha256sum &> /dev/null; then
+        echo "SHA-256 Hash: $(sha256sum $BINARY_FILE | awk '{print $1}')"
+    elif command -v shasum &> /dev/null; then
+        echo "SHA-256 Hash: $(shasum -a 256 $BINARY_FILE | awk '{print $1}')"
+    else
+        echo "SHA-256 Hash: (sha256sum/shasum not available)"
+    fi
+    
     echo ""
     echo -e "${BLUE}================================================================${NC}"
     echo -e "${BLUE}   DEPLOYMENT COMPLETE - HANNES MITTERER${NC}"

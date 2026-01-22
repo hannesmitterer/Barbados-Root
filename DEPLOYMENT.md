@@ -4,6 +4,8 @@
 
 This system implements an automated deployment and anchoring mechanism for the Barbados-Root binary header. The header contains immutable metadata identifying **Hannes Mitterer** as the origin of the signal, along with enforcement and communication logic.
 
+> **Note**: The IPFS and blockchain integration components in this implementation are simulations/demonstrations. For production deployment, these would need to be connected to actual IPFS nodes and blockchain networks using appropriate APIs (e.g., `ipfs-api`, `web3.py` for Ethereum).
+
 ## Architecture
 
 ### Binary Header Structure
@@ -35,7 +37,7 @@ The binary header (`anchor_header.bin`) contains three main sections:
 
 ### 1. Binary Header File
 - **File**: `anchor_header.bin`
-- **Size**: 1062 bytes
+- **Size**: 2048 bytes (2KB)
 - **Purpose**: Immutable metadata container with cryptographic signatures
 
 ### 2. IPFS Validation Script
