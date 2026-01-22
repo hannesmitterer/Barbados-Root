@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metadata Anchoring System - Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./metadata-anchor.js"></script>
+    <style>
+        :root {
+            --stone: #1C1C1C;
+            --gold: #C5A059;
+            --ocean: #0077B6;
+            --leaf: #00B894;
+            --ethos: #D2B48C;
+        }
+        body {
+            background-color: var(--stone);
+            color: var(--ethos);
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        .code-block {
+            background: #0a0a0a;
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .badge-success {
+            background: var(--leaf);
+            color: black;
+        }
+        .badge-info {
+            background: var(--ocean);
+            color: white;
+        }
+        .badge-gold {
+            background: var(--gold);
+            color: black;
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 pb-6 border-b border-[#C5A059]">
+            <h1 class="text-4xl font-bold text-[#C5A059] mb-2">
+                🔒 Binary Metadata Anchoring System
+            </h1>
+            <p class="text-lg text-[#D2B48C]">
+                IPFS Validation • Blockchain Timestamping • Node Synchronization
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Control Panel -->
+            <div class="bg-white/5 border border-[#0077B6] rounded-xl p-6">
+                <h2 class="text-xl font-bold text-[#0077B6] mb-4">Control Panel</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm mb-2">Metadata Title:</label>
+                        <input type="text" id="metadata-title" 
+                               class="w-full bg-black/40 border border-[#D2B48C]/30 rounded px-3 py-2 text-white"
+                               value="Resonance School Protocol" />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm mb-2">IPFS CID:</label>
+                        <input type="text" id="ipfs-cid" 
+                               class="w-full bg-black/40 border border-[#D2B48C]/30 rounded px-3 py-2 text-white font-mono text-xs"
+                               value="QmResonanceSchoolTruth20251226HannesMitterer" />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm mb-2">Nodes (comma-separated):</label>
+                        <input type="text" id="nodes" 
+                               class="w-full bg-black/40 border border-[#D2B48C]/30 rounded px-3 py-2 text-white"
+                               value="NODE_01, NODE_02, NODE_03, NODE_04" />
+                    </div>
+                    
+                    <button onclick="createAnchor()" 
+                            class="w-full px-6 py-3 bg-[#C5A059] text-black font-bold rounded hover:bg-[#D4AF37] transition">
+                        🔗 Create Comprehensive Anchor
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Display -->
+            <div class="bg-white/5 border border-[#00B894] rounded-xl p-6">
+                <h2 class="text-xl font-bold text-[#00B894] mb-4">Governance Status</h2>
+                
+                <div id="status-display" class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span>Total Anchors:</span>
+                        <span id="total-anchors" class="font-bold">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>IPFS Anchors:</span>
+                        <span id="ipfs-anchors" class="font-bold">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Blockchain Timestamps:</span>
+                        <span id="blockchain-anchors" class="font-bold">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Validated IPFS:</span>
+                        <span id="validated-ipfs" class="font-bold">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Integrity Score:</span>
+                        <span id="integrity-score" class="font-bold text-[#00B894]">0%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>NSR Enforced:</span>
+                        <span class="status-badge badge-success">ACTIVE</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>OLF Active:</span>
+                        <span class="status-badge badge-success">ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Display -->
+        <div class="bg-white/5 border border-[#C5A059] rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-bold text-[#C5A059] mb-4">Anchor Record</h2>
+            <pre id="output" class="code-block text-[#00B894]">
+Waiting for anchor creation...</pre>
+        </div>
+
+        <!-- Recent Anchors -->
+        <div class="bg-white/5 border border-[#D2B48C] rounded-xl p-6">
+            <h2 class="text-xl font-bold text-[#D2B48C] mb-4">Recent Anchors</h2>
+            <div id="recent-anchors" class="space-y-3">
+                <p class="text-sm opacity-60">No anchors created yet</p>
+            </div>
+        </div>
+
+        <footer class="mt-12 pt-6 border-t border-[#333] text-center text-sm opacity-50">
+            <p>Binary Metadata Anchoring System v1.0.0 • NSR Enforced • MIT License</p>
+            <p class="mt-2">"Nothing is final. The Truth is anchored."</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize the MetadataAnchor instance
+        const anchor = new MetadataAnchor({
+            ipfsGateway: 'https://ipfs.io/ipfs/',
+            blockchainNetwork: 'mainnet',
+            nodeEndpoints: ['NODE_01', 'NODE_02', 'NODE_03', 'NODE_04']
+        });
+
+        const recentAnchors = [];
+
+        async function createAnchor() {
+            try {
+                // Get input values
+                const title = document.getElementById('metadata-title').value;
+                const ipfsCID = document.getElementById('ipfs-cid').value;
+                const nodesStr = document.getElementById('nodes').value;
+                const nodes = nodesStr.split(',').map(n => n.trim());
+
+                // Create metadata object
+                const metadata = {
+                    title: title,
+                    version: '1.0.0',
+                    timestamp: new Date().toISOString(),
+                    protocol: 'Barbados-Root',
+                    governance: {
+                        nsr_enforced: true,
+                        olf_active: true,
+                        mode: 'autonomous'
+                    }
+                };
+
+                // Create comprehensive anchor
+                const record = await anchor.createComprehensiveAnchor(metadata, {
+                    ipfsCID: ipfsCID,
+                    blockchain: true,
+                    nodes: nodes,
+                    blockchainData: {
+                        blockNumber: Math.floor(Math.random() * 1000000) + 15000000,
+                        confirmed: true
+                    }
+                });
+
+                // Display the record
+                document.getElementById('output').textContent = JSON.stringify(record, null, 2);
+
+                // Add to recent anchors
+                recentAnchors.unshift({
+                    hash: record.hash,
+                    timestamp: record.timestamp,
+                    title: title
+                });
+
+                if (recentAnchors.length > 5) {
+                    recentAnchors.pop();
+                }
+
+                updateRecentAnchors();
+                updateStatus();
+
+                // Scroll to output
+                document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            } catch (error) {
+                document.getElementById('output').textContent = 'Error: ' + error.message;
+                console.error(error);
+            }
+        }
+
+        function updateStatus() {
+            const status = anchor.getGovernanceStatus();
+            
+            document.getElementById('total-anchors').textContent = status.totalAnchors;
+            document.getElementById('ipfs-anchors').textContent = status.ipfsAnchors;
+            document.getElementById('blockchain-anchors').textContent = status.blockchainAnchors;
+            document.getElementById('validated-ipfs').textContent = status.validatedIPFS;
+            document.getElementById('integrity-score').textContent = status.integrityScore + '%';
+        }
+
+        function updateRecentAnchors() {
+            const container = document.getElementById('recent-anchors');
+            
+            if (recentAnchors.length === 0) {
+                container.innerHTML = '<p class="text-sm opacity-60">No anchors created yet</p>';
+                return;
+            }
+
+            container.innerHTML = recentAnchors.map(a => `
+                <div class="bg-black/40 border border-[#D2B48C]/30 rounded p-3">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="font-bold text-sm">${a.title}</span>
+                        <span class="status-badge badge-gold">ANCHORED</span>
+                    </div>
+                    <div class="text-xs opacity-70">
+                        <div>Hash: <span class="font-mono">${a.hash.substring(0, 16)}...</span></div>
+                        <div>Time: ${new Date(a.timestamp).toLocaleString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize display
+        updateStatus();
+    </script>
+</body>
+</html>
