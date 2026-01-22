@@ -345,6 +345,11 @@
                     barbadosNodeId: 'BARBADOS_ROOT_SOVEREIGNTY'
                 });
                 
+                // Wait for initialization to complete
+                if (barbadosIntegration.state.initializationPromise) {
+                    await barbadosIntegration.state.initializationPromise;
+                }
+                
                 // Update UI with system status
                 updateAdvancedSystemsUI();
                 
@@ -357,46 +362,52 @@
         function updateAdvancedSystemsUI() {
             if (!barbadosIntegration) return;
             
-            const status = barbadosIntegration.getSystemStatus();
-            const metrics = barbadosIntegration.getMetrics();
-            
-            // Update status indicators
-            if (document.getElementById('helmi-status')) {
-                document.getElementById('helmi-status').textContent = status.helmiAI.active ? 'ACTIVE' : 'INACTIVE';
-                document.getElementById('helmi-status').className = status.helmiAI.active ? 'text-emerald-400 font-bold' : 'text-gray-500';
-            }
-            
-            if (document.getElementById('kernel-status')) {
-                document.getElementById('kernel-status').textContent = status.consciousnessKernel.active ? 'ACTIVE' : 'INACTIVE';
-                document.getElementById('kernel-status').className = status.consciousnessKernel.active ? 'text-emerald-400 font-bold' : 'text-gray-500';
-            }
-            
-            if (document.getElementById('ggi-status')) {
-                document.getElementById('ggi-status').textContent = status.ggiAIC.active ? 'ACTIVE' : 'INACTIVE';
-                document.getElementById('ggi-status').className = status.ggiAIC.active ? 'text-emerald-400 font-bold' : 'text-gray-500';
-            }
-            
-            // Update metrics
-            if (document.getElementById('helmi-entropy')) {
-                document.getElementById('helmi-entropy').textContent = (status.helmiAI.entropy || 0).toFixed(3);
-            }
-            
-            if (document.getElementById('kernel-ethical')) {
-                document.getElementById('kernel-ethical').textContent = (status.consciousnessKernel.ethicalBalance || 0).toFixed(1) + '%';
-            }
-            
-            if (document.getElementById('ggi-lex-amoris')) {
-                document.getElementById('ggi-lex-amoris').textContent = (status.ggiAIC.lexAmorisScore || 0).toFixed(1) + '%';
-            }
-            
-            if (document.getElementById('system-operational')) {
-                document.getElementById('system-operational').textContent = status.operationalStatus;
-                const opStatusEl = document.getElementById('system-operational');
-                if (status.operationalStatus === 'OPERATIONAL') {
-                    opStatusEl.className = 'text-emerald-400 font-bold text-lg';
-                } else {
-                    opStatusEl.className = 'text-yellow-400 font-bold text-lg';
+            try {
+                const status = barbadosIntegration.getSystemStatus();
+                const metrics = barbadosIntegration.getMetrics();
+                
+                // Update status indicators
+                if (document.getElementById('helmi-status')) {
+                    document.getElementById('helmi-status').textContent = status.helmiAI.active ? 'ACTIVE' : 'INACTIVE';
+                    document.getElementById('helmi-status').className = status.helmiAI.active ? 'text-emerald-400 font-bold' : 'text-gray-500';
                 }
+                
+                if (document.getElementById('kernel-status')) {
+                    document.getElementById('kernel-status').textContent = status.consciousnessKernel.active ? 'ACTIVE' : 'INACTIVE';
+                    document.getElementById('kernel-status').className = status.consciousnessKernel.active ? 'text-emerald-400 font-bold' : 'text-gray-500';
+                }
+                
+                if (document.getElementById('ggi-status')) {
+                    document.getElementById('ggi-status').textContent = status.ggiAIC.active ? 'ACTIVE' : 'INACTIVE';
+                    document.getElementById('ggi-status').className = status.ggiAIC.active ? 'text-emerald-400 font-bold' : 'text-gray-500';
+                }
+                
+                // Update metrics
+                if (document.getElementById('helmi-entropy')) {
+                    document.getElementById('helmi-entropy').textContent = (status.helmiAI.entropy || 0).toFixed(3);
+                }
+                
+                if (document.getElementById('kernel-ethical')) {
+                    document.getElementById('kernel-ethical').textContent = (status.consciousnessKernel.ethicalBalance || 0).toFixed(1) + '%';
+                }
+                
+                if (document.getElementById('ggi-lex-amoris')) {
+                    document.getElementById('ggi-lex-amoris').textContent = (status.ggiAIC.lexAmorisScore || 0).toFixed(1) + '%';
+                }
+                
+                if (document.getElementById('system-operational')) {
+                    document.getElementById('system-operational').textContent = status.operationalStatus;
+                    const opStatusEl = document.getElementById('system-operational');
+                    if (status.operationalStatus === 'OPERATIONAL') {
+                        opStatusEl.className = 'text-emerald-400 font-bold text-lg';
+                    } else if (status.operationalStatus === 'ERROR') {
+                        opStatusEl.className = 'text-red-400 font-bold text-lg';
+                    } else {
+                        opStatusEl.className = 'text-yellow-400 font-bold text-lg';
+                    }
+                }
+            } catch (error) {
+                console.error('[Barbados Root] Error updating UI:', error);
             }
         }
         

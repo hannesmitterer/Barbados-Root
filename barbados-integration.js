@@ -42,17 +42,22 @@ class BarbadosRootIntegration {
             integrated: false,
             barbadosNodeRegistered: false,
             lastUpdate: null,
-            operationalStatus: 'INITIALIZING'
+            operationalStatus: 'INITIALIZING',
+            initializationPromise: null
         };
         
         if (this.config.autoActivate) {
-            this.initialize();
+            // Store the initialization promise for external handling
+            this.state.initializationPromise = this.initialize().catch(error => {
+                console.error('[Barbados Root] Auto-initialization failed:', error);
+                this.state.operationalStatus = 'ERROR';
+            });
         }
     }
     
     /**
      * Initialize and activate all systems
-     * @returns {Object} Initialization result
+     * @returns {Promise<Object>} Initialization result
      */
     async initialize() {
         try {
@@ -82,7 +87,7 @@ class BarbadosRootIntegration {
             this.consciousnessKernel.synchronizeNodes();
             
             // Harmonize blockchain proofs
-            await this.harmonizeGlobalState();
+            const harmonization = await this.harmonizeGlobalState();
             
             // Mark as integrated
             this.state.integrated = true;
@@ -95,6 +100,7 @@ class BarbadosRootIntegration {
                 success: true,
                 status: this.state.operationalStatus,
                 barbadosNodeId: this.config.barbadosNodeId,
+                harmonization: harmonization,
                 timestamp: this.state.lastUpdate
             };
             
